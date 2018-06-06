@@ -181,11 +181,11 @@ Section "OpenModelica Core" Section1
 !endif
   # create OMTLMSimulator directory
   SetOutPath "$INSTDIR\OMTLMSimulator\bin"
-  File /r "c:\dev\OMTLMSimulator\bin\*"
+  File /r "c:\dev\OMSimulator\OMTLMSimulator\bin\*"
   SetOutPath "$INSTDIR\OMTLMSimulator\Documentation"
-  File /oname=OMTLMSimulator.pdf "c:\dev\OMTLMSimulator\Documentation\TLMPlugin.pdf"
+  File /oname=OMTLMSimulator.pdf "c:\dev\OMSimulator\OMTLMSimulator\Documentation\TLMPlugin.pdf"
   SetOutPath "$INSTDIR\OMTLMSimulator\CompositeModels"
-  File /r "c:\dev\OMTLMSimulator\CompositeModels\*"
+  File /r "c:\dev\OMSimulator\OMTLMSimulator\CompositeModels\*"
   # Create share directory and copy files in it
   SetOutPath "$INSTDIR\share"
   File /r /x "*.svn" /x "*.git" "..\build\share\*"
