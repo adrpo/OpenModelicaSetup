@@ -132,7 +132,7 @@ git clean -fdx
 git status
 git submodule status --recursive
 git checkout master
-make OMTLMSimuatorStandalone install
+make OMTLMSimulatorStandalone install
 
 # build the installer
 cd /c/dev/OpenModelica${PLATFORM}/OpenModelicaSetup
