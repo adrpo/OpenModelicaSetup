@@ -95,7 +95,7 @@ make -f 'Makefile.omdev.mingw' ${MAKETHREADS} clean
 cd /c/dev/${OM_ENCRYPT}OpenModelica${PLATFORM}
 
 # clone OMEncryption if needed
-if [ "$OMEncryption" = "Yes" ]; then 
+if [ "${OMENCRYPTION}" = "yes" ]; then
   git clone https://github.com/OpenModelica/OMEncryption
 fi
 
