@@ -18,8 +18,8 @@ export PLATFORM=$3 # 32bit or 64bit
 export GIT_TAG=$4
 export OPENMODELICA_BRANCH=$GIT_TAG
 
-# to build with encryption set OMEncryption=yes
-if [ "$OMEncryption" = "Yes" ]; then 
+# to build with encryption set OMENCRYPTION=Yes
+if [ "${OMENCRYPTION}" = "yes" ]; then
  export OM_ENCRYPT="encryption/"
  export OM_ENCRYPT_FLAGS="OMENCRYPTION=yes"
 fi
