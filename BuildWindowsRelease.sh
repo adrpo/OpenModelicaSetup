@@ -20,7 +20,7 @@ export OPENMODELICA_BRANCH=$GIT_TAG
 
 # to build with encryption set OMENCRYPTION=Yes
 if [ "${OMENCRYPTION}" = "yes" ]; then
- export OM_ENCRYPT="encryption/"
+ export OM_ENCRYPT="e/"
  export OM_ENCRYPT_FLAGS="OMENCRYPTION=yes"
 fi
 
@@ -37,8 +37,8 @@ rm -rf ${TMP}/*
 rm -rf ${TEMP}/*
 
 # set the OPENMODELICAHOME and OPENMODELICALIBRARY
-export OPENMODELICAHOME="c:/dev/${OM_ENCRYPT}OpenModelica${PLATFORM}/build"
-export OPENMODELICALIBRARY="c:/dev/${OM_ENCRYPT}OpenModelica${PLATFORM}/build/lib/omlibrary"
+export OPENMODELICAHOME="c:/dev/${OM_ENCRYPT}OM${PLATFORM}/build"
+export OPENMODELICALIBRARY="c:/dev/${OM_ENCRYPT}OM${PLATFORM}/build/lib/omlibrary"
 
 # have OMDEV in Msys version
 export OMDEV=/c/OMDev/
@@ -48,7 +48,7 @@ cd /c/OMDev/
 svn up . --accept theirs-full
 
 # update OpenModelica
-cd /c/dev/${OM_ENCRYPT}OpenModelica${PLATFORM}
+cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}
 git fetch && git fetch --tags
 
 git reset --hard "$OPENMODELICA_BRANCH" && git checkout "$OPENMODELICA_BRANCH" && git pull --recurse-submodules && git fetch && git fetch --tags || exit 1
@@ -74,7 +74,7 @@ fi
 # clean
 rm -rf build
 git submodule foreach --recursive  "git fetch --tags && git reset --hard && git clean -fdxq -e /git -e /svn" || exit 1
-git clean -fdxq -e OpenModelicaSetup || exit 1
+git clean -fdxq -e OMSetup || exit 1
 git status
 git submodule status --recursive
 
@@ -82,17 +82,17 @@ git submodule status --recursive
 mkdir -p ${OMC_INSTALL_PREFIX}
 
 # update OpenModelicaSetup
-cd /c/dev/${OM_ENCRYPT}OpenModelica${PLATFORM}/OpenModelicaSetup
+cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}/OMSetup
 svn up . --accept theirs-full
 
 # build OpenModelica
-cd /c/dev/${OM_ENCRYPT}OpenModelica${PLATFORM}
+cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}
 echo "Cleaning OpenModelica"
 rm -rf build/
 mkdir -p build/
 make -f 'Makefile.omdev.mingw' ${MAKETHREADS} gitclean || make -f 'Makefile.omdev.mingw' ${MAKETHREADS} gitclean || true
 make -f 'Makefile.omdev.mingw' ${MAKETHREADS} clean
-cd /c/dev/${OM_ENCRYPT}OpenModelica${PLATFORM}
+cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}
 
 # clone OMEncryption if needed
 if [ "${OMENCRYPTION}" = "yes" ]; then
@@ -103,13 +103,13 @@ echo "Building OpenModelica and OpenModelica libraries"
 # make sure we break on error!
 set -e
 make -f 'Makefile.omdev.mingw' ${MAKETHREADS} ${OM_ENCRYPT_FLAGS} omc omc-diff omlibrary-all qtclients
-cd /c/dev/${OM_ENCRYPT}OpenModelica${PLATFORM}
+cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}
 echo "Installing Python scripting"
 rm -rf OMPython
-git clone https://github.com/OpenModelica/OMPython -q -b master /c/dev/${OM_ENCRYPT}OpenModelica${PLATFORM}/OMPython
+git clone https://github.com/OpenModelica/OMPython -q -b master /c/dev/${OM_ENCRYPT}OM${PLATFORM}/OMPython
 # build OMPython
 make -k -f 'Makefile.omdev.mingw' ${MAKETHREADS} install-python
-cd /c/dev/${OM_ENCRYPT}OpenModelica${PLATFORM}
+cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}
 echo "Building MSVC compiled runtime"
 make -f 'Makefile.omdev.mingw' ${MAKETHREADS} BUILDTYPE=Release VSVERSION=2013 simulationruntimecmsvc
 echo "Building MSVC CPP runtime"
@@ -118,7 +118,7 @@ echo "Building CPP runtime"
 make -f 'Makefile.omdev.mingw' ${MAKETHREADS} BUILDTYPE=Release runtimeCPPinstall
 
 # wget the html & pdf versions of OpenModelica users guide
-cd /c/dev/${OM_ENCRYPT}OpenModelica${PLATFORM}/build/share/doc/omc
+cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}/build/share/doc/omc
 wget --no-check-certificate https://openmodelica.org/doc/openmodelica-doc-latest.tar.xz
 tar -xJf openmodelica-doc-latest.tar.xz --strip-components=2
 rm openmodelica-doc-latest.tar.xz
@@ -127,10 +127,10 @@ wget --no-check-certificate https://openmodelica.org/doc/OpenModelicaUsersGuide/
 
 # get PySimulator
 # for now get the master from github since OpenModelica plugin is still not part of tagged release. This should be updated once PySimulator outs a new release.
-git clone https://github.com/PySimulator/PySimulator -q -b master /c/dev/${OM_ENCRYPT}OpenModelica${PLATFORM}/build/share/omc/scripts/PythonInterface/PySimulator
+git clone https://github.com/PySimulator/PySimulator -q -b master /c/dev/${OM_ENCRYPT}OM${PLATFORM}/build/share/omc/scripts/PythonInterface/PySimulator
 
 # get Figaro
-cd /c/dev/${OM_ENCRYPT}OpenModelica${PLATFORM}/build/share
+cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}/build/share
 # do not get it from sourceforge as it fails sometimes!
 #wget --no-check-certificate -O jEdit4.5_VisualFigaro.zip https://sourceforge.net/p/visualfigaro/code/HEAD/tree/Trunk/Package/4_Packages_livrables/jEdit4.5_VisualFigaro.zip?format=raw
 wget --no-check-certificate -O jEdit4.5_VisualFigaro.zip https://build.openmodelica.org/omc/figaro/v1.12/jEdit4.5_VisualFigaro.zip
@@ -148,7 +148,7 @@ git checkout master
 make OMTLMSimulatorStandalone
 
 # build the installer
-cd /c/dev/${OM_ENCRYPT}OpenModelica${PLATFORM}/OpenModelicaSetup
+cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}/OMSetup
 makensis //DPLATFORMVERSION="${PLATFORM::-3}" OpenModelicaSetup.nsi > trace.txt 2>&1
 cat trace.txt
 # move the installer
