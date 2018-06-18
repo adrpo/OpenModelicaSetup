@@ -155,7 +155,7 @@ cat trace.txt
 mv OpenModelica.exe ${OMC_INSTALL_FILE_PREFIX}.exe
 
 # gather the svn log
-cd /c/dev/${OM_ENCRYPT}OpenModelica${PLATFORM}
+cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}
 git log --name-status --graph --submodule > ${OMC_INSTALL_FILE_PREFIX}-ChangeLog.txt
 
 # make the readme
@@ -203,7 +203,7 @@ echo "Read more about OpenModelica at https://openmodelica.org" >> ${OMC_INSTALL
 echo "Contact us at OpenModelica@ida.liu.se for further issues or questions." >> ${OMC_INSTALL_FILE_PREFIX}-README.txt
 
 # make the testsuite-trace
-#cd /c/dev/OpenModelica${PLATFORM}
+#cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}
 #echo "Running testsuite trace"
 #make -f 'Makefile.omdev.mingw' ${MAKETHREADS} testlogwindows > tmpTime.log 2>&1
 
