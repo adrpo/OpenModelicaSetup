@@ -96,6 +96,7 @@ cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}
 
 # clone OMEncryption if needed
 if [ "${OMENCRYPTION}" = "yes" ]; then
+  rm -rf OMEncryption
   git clone https://github.com/OpenModelica/OMEncryption
 fi
 
