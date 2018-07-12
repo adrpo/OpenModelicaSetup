@@ -72,6 +72,7 @@ if [ -f "${OMC_INSTALL_FILE_PREFIX}.exe" ]; then
 fi
 
 # clean
+rm -rf /c/dev/OpenModelica_releases/${OM_ENCRYPT}/v*
 rm -rf build
 git submodule foreach --recursive  "git fetch --tags && git reset --hard && git clean -fdxq -e /git -e /svn" || exit 1
 git clean -fdxq -e OMSetup || exit 1
