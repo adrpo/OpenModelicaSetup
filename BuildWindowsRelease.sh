@@ -45,7 +45,7 @@ export OMDEV=/c/OMDev/
 
 # update OMDev
 cd /c/OMDev/
-svn up . --accept theirs-full
+git pull
 
 # update OpenModelica
 cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}
