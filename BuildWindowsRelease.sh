@@ -139,14 +139,10 @@ wget --no-check-certificate -O jEdit4.5_VisualFigaro.zip https://build.openmodel
 unzip jEdit4.5_VisualFigaro.zip
 rm jEdit4.5_VisualFigaro.zip
 
-# update and build the OMTLMSimulator
-cd /c/dev/OMSimulator
-git reset --hard origin/master && git checkout master && git pull && git fetch --tags || exit 1
-git submodule foreach --recursive  "git fetch --tags && git reset --hard && git clean -fdx" || exit 1
-git clean -fdx
-git status
-git submodule status --recursive
-git checkout master
+# OMSimulator and OMTLMSimulator
+cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}/
+make -f Makefile.omdev.mingw omsimulator
+cd OMSimulator
 make OMTLMSimulatorStandalone
 
 # build the installer
