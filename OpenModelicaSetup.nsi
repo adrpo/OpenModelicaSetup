@@ -261,7 +261,7 @@ Section "ModelicaServices 3.2.2"
   File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\ModelicaServices 3.2.2"
 SectionEnd
 
-Section "Modelica_DeviceDrivers 1.5.1"
+Section "Modelica_DeviceDrivers 1.6.0"
   SectionIn RO
   # Create lib\omlibrary directory and copy files in it
   SetOutPath "$INSTDIR\lib\omlibrary"
