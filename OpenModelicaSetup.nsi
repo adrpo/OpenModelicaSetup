@@ -37,7 +37,7 @@ BrandingText "Copyright $2 OpenModelica"  ; The $2 variable is filled in the Fun
 !define MUI_FINISHPAGE_RUN
 !define MUI_FINISHPAGE_RUN_TEXT "Start OpenModelica Connection Editor (OMEdit)"
 !define MUI_FINISHPAGE_RUN_FUNCTION "LaunchOMEdit"
-!define MUI_UNICON "icons\Uninstall.ico"
+!define MUI_UNICON "icons\OpenModelica.ico"
 !define MUI_UNFINISHPAGE_NOAUTOCLOSE
 !define MUI_UNWELCOMEFINISHPAGE_BITMAP "images\openmodelica.bmp"
 
@@ -349,7 +349,7 @@ Section -post SEC0001
   "" "$INSTDIR\icons\IExplorer.ico"
   SetOutPath "$INSTDIR\"
   CreateShortCut "$SMPROGRAMS\$StartMenuGroup\Uninstall OpenModelica.lnk" "$INSTDIR\Uninstall.exe" \
-  "" "$INSTDIR\icons\Uninstall.ico"
+  "" "$INSTDIR\icons\OpenModelica.ico"
   CreateDirectory "$SMPROGRAMS\$StartMenuGroup\Documentation"
   SetOutPath ""
   CreateShortCut "$SMPROGRAMS\$StartMenuGroup\Documentation\OpenModelica - Users Guide.lnk" "$INSTDIR\share\doc\omc\OpenModelicaUsersGuide.url" \
