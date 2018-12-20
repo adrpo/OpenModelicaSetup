@@ -92,7 +92,7 @@ OutFile "OpenModelica.exe"
 CRCCheck on
 XPStyle on
 ShowInstDetails hide
-VIProductVersion 1.13.0.0
+VIProductVersion 1.14.0.0
 VIAddVersionKey ProductName "OpenModelica"
 VIAddVersionKey ProductVersion "${VERSION}"
 VIAddVersionKey CompanyName "${COMPANY}"
