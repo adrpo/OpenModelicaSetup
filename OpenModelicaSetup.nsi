@@ -263,28 +263,28 @@ Section "Complex 3.2.3.mo"
   SectionIn RO
   # Create lib\omlibrary directory and copy files in it
   SetOutPath "$INSTDIR\lib\omlibrary"
-  File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\Complex 3.2.2.mo"
+  File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\Complex 3.2.3.mo"
 SectionEnd
 
 Section "Modelica 3.2.3"
   SectionIn RO
   # Create lib\omlibrary directory and copy files in it
   SetOutPath "$INSTDIR\lib\omlibrary"
-  File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\Modelica 3.2.2"
+  File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\Modelica 3.2.3"
 SectionEnd
 
 Section "ModelicaTest 3.2.3"
   SectionIn RO
   # Create lib\omlibrary directory and copy files in it
   SetOutPath "$INSTDIR\lib\omlibrary"
-  File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\ModelicaTest 3.2.2"
+  File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\ModelicaTest 3.2.3"
 SectionEnd
 
 Section "ModelicaServices 3.2.3"
   SectionIn RO
   # Create lib\omlibrary directory and copy files in it
   SetOutPath "$INSTDIR\lib\omlibrary"
-  File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\ModelicaServices 3.2.2"
+  File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\ModelicaServices 3.2.3"
 SectionEnd
 
 Section "ModelicaReference"
@@ -298,7 +298,7 @@ Section "Modelica_DeviceDrivers 1.7.0"
   SectionIn RO
   # Create lib\omlibrary directory and copy files in it
   SetOutPath "$INSTDIR\lib\omlibrary"
-  File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\Modelica_DeviceDrivers 1.6.0"
+  File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\Modelica_DeviceDrivers 1.7.0"
 SectionEnd
 
 Section "Modelica_Synchronous 0.92.1"
