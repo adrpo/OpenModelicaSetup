@@ -28,9 +28,13 @@ for /l %%N in (1 1 %file.count%) do (
   if /i "!file.%%N!" == "Complex 3.2.2.mo" set VALIDLIBRARY=
   if /i "!file.%%N!" == "Modelica 3.2.2" set VALIDLIBRARY=
   if /i "!file.%%N!" == "ModelicaTest 3.2.2" set VALIDLIBRARY=
-  if /i "!file.%%N!" == "ModelicaReference" set VALIDLIBRARY=
   if /i "!file.%%N!" == "ModelicaServices 3.2.2" set VALIDLIBRARY=
-  if /i "!file.%%N!" == "Modelica_DeviceDrivers 1.6.0" set VALIDLIBRARY=
+  if /i "!file.%%N!" == "Complex 3.2.3.mo" set VALIDLIBRARY=
+  if /i "!file.%%N!" == "Modelica 3.2.3" set VALIDLIBRARY=
+  if /i "!file.%%N!" == "ModelicaTest 3.2.3" set VALIDLIBRARY=
+  if /i "!file.%%N!" == "ModelicaServices 3.2.3" set VALIDLIBRARY=
+  if /i "!file.%%N!" == "ModelicaReference" set VALIDLIBRARY=
+  if /i "!file.%%N!" == "Modelica_DeviceDrivers 1.7.0" set VALIDLIBRARY=
   if /i "!file.%%N!" == "Modelica_Synchronous 0.92.1" set VALIDLIBRARY=
   :: if everything is ok then create a section for the library
   if defined VALIDLIBRARY (
