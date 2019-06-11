@@ -109,7 +109,7 @@ Section "OpenModelica Core" Section1
   # Create bin directory and copy files in it
   SetOutPath "$INSTDIR\bin"
   File "..\build\bin\*"
-  File "..\OMCompiler\OSMC-License.txt"
+  File "..\OSMC-License.txt"
   # Copy the openssl binaries
   File "bin\libeay32.dll"
   File "bin\libssl32.dll"
