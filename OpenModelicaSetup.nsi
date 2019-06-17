@@ -27,7 +27,6 @@ BrandingText "Copyright $2 OpenModelica"  ; The $2 variable is filled in the Fun
 !define MUI_WELCOMEPAGE_TITLE_3LINES
 !define MUI_WELCOMEPAGE_TEXT "The installer will guide you through the steps required to install $(^Name) on your computer.$\r$\n$\r$\n$\r$\nThe package includes OpenModelica, a Modelica modeling, compilation and simulation environment based on free software."
 !define MUI_COMPONENTSPAGE_SMALLDESC
-!define MUI_DIRECTORYPAGE_TEXT_TOP "Please do not install OpenModelica in a directory that contains spaces for example $\"C:\Program Files\OpenModelica$\". Keep if possible the default directory suggested by the installer."
 !define MUI_STARTMENUPAGE_REGISTRY_ROOT SHCTX
 !define MUI_STARTMENUPAGE_NODISABLE
 !define MUI_STARTMENUPAGE_REGISTRY_KEY ${REGKEY}
@@ -75,7 +74,6 @@ Var StartMenuGroup
 
 # Installer pages
 !insertmacro MUI_PAGE_WELCOME
-!define MUI_PAGE_CUSTOMFUNCTION_LEAVE "DirectoryLeave"
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
@@ -491,14 +489,20 @@ uninst:
 NotInstalled:
   InitPluginsDir
   !insertmacro MULTIUSER_INIT
+  !include x64.nsh
   ; check for /D flag
   ${If} $INSTDIR != ""
     ; /D was used so we don't set the installation path
   ${Else}
-    ${GetDrives} "HDD" "HardDiskDrives"
-    # after calling GetDrives $R0 will contain the first available drive letter e.g "C:\"
-    StrCpy $INSTDIR $R0
-    StrCpy $INSTDIR "$R0$(^Name)"
+    ;set initial value for $INSTDIR
+    StrCpy $INSTDIR "$PROGRAMFILES\$(^Name)"
+    ${If} ${RunningX64}
+    ${AndIf} ${PLATFORMVERSION} == "64"
+      ; disable registry redirection (enable access to 64-bit portion of registry)
+      SetRegView 64
+      ; change install dir 
+      StrCpy $INSTDIR "$PROGRAMFILES64\$(^Name)"
+    ${EndIf}
   ${EndIf}
   ; check for /S flag
   IfSilent +1 +4 ; in silent install mode set multiuser to AllUsers.
