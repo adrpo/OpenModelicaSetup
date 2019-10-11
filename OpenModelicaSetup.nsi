@@ -1,6 +1,8 @@
 # Adeel Asghar [adeel.asghar@liu.se]
 # 2011-jul-29 21:01:29
 
+Unicode true
+
 !ifndef PLATFORMVERSION
   !error "Argument PLATFORMVERSION is not set. Call with argument /DPLATFORMVERSION=32 or /DPLATFORMVERSION=64"
 !endif
@@ -326,7 +328,7 @@ Section -Main SEC0000
   FileWrite $4 $MultiUser.InstallMode
   FileClose $4
   # set the rights for all users
-  AccessControl::GrantOnFile "$INSTDIR" "(BU)" "FullAccess"
+  AccessControlW::GrantOnFile "$INSTDIR" "(BU)" "FullAccess"
   # create environment variables
   IfSilent KeepOMDEV ; if silent install mode is enabled then skip OMDEV message.
   ReadRegStr $R0 ${ENV_HKLM} OMDEV

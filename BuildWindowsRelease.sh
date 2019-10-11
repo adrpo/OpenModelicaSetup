@@ -25,7 +25,7 @@ if [ "${OMENCRYPTION}" = "yes" ]; then
 fi
 
 # set the path to our tools
-export PATH=$PATH:/c/Program\ Files/TortoiseSVN/bin/:/c/bin/jdk/bin:/c/bin/nsis/:/c/bin/git/bin:/c/bin/git/usr/bin
+export PATH=$PATH:/c/Program\ Files/TortoiseSVN/bin/:/c/bin/jdk/bin:/c/bin/nsis3.04/:/c/bin/git/bin:/c/bin/git/usr/bin
 
 # don't exit on error
 set +e
