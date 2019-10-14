@@ -107,7 +107,7 @@ Section "OpenModelica Core" Section1
   SectionIn RO
   SetOverwrite on
   # Create bin directory and copy files in it
-  SetOutPath "$INSTDIR\bin"
+  SetOutPath "\\?\$INSTDIR\bin"
   File "..\build\bin\*"
   File "..\OSMC-License.txt"
   # Copy the openssl binaries
@@ -117,10 +117,10 @@ Section "OpenModelica Core" Section1
   # Copy the qt plugins
   File /r /x "*.svn" "$%OMDEV%\tools\msys\mingw${PLATFORMVERSION}\share\qt5\plugins\*"
   # Create the bin\osgPlugins-3.5.1 directory
-  SetOutPath "$INSTDIR\bin\osgPlugins-3.5.1"
+  SetOutPath "\\?\$INSTDIR\bin\osgPlugins-3.5.1"
   File /r /x "*.svn" "$%OMDEV%\tools\msys\mingw${PLATFORMVERSION}\bin\osgPlugins-3.5.1\*"
   # Create icons directory and copy files in it
-  SetOutPath "$INSTDIR\icons"
+  SetOutPath "\\?\$INSTDIR\icons"
   File /r /x "*.svn" "icons\*"
   File "..\OMEdit\OMEdit\OMEditGUI\Resources\icons\omedit.ico"
   File "..\OMOptim\OMOptim\GUI\Resources\omoptim.ico"
@@ -128,25 +128,25 @@ Section "OpenModelica Core" Section1
   File "..\OMShell\OMShell\OMShellGUI\Resources\omshell.ico"
   File "..\OMNotebook\OMNotebook\OMNotebookGUI\Resources\OMNotebook_icon.ico"
   # Create include\omc directory and copy files in it
-  SetOutPath "$INSTDIR\include\omc"
+  SetOutPath "\\?\$INSTDIR\include\omc"
   File /r /x "*.svn" "..\build\include\omc\*"
   # Create lib\omc directory and copy files in it
-  SetOutPath "$INSTDIR\lib\omc"
+  SetOutPath "\\?\$INSTDIR\lib\omc"
   File /r /x "*.svn" /x "*.git" "..\build\lib\omc\*"
   # Create lib\python directory and copy files in it
-  SetOutPath "$INSTDIR\lib\python"
+  SetOutPath "\\?\$INSTDIR\lib\python"
   File /r /x "*.svn" /x "*.git" "..\build\lib\python\*"
   # Copy the OMSimulator libs
-  SetOutPath "$INSTDIR\lib"
+  SetOutPath "\\?\$INSTDIR\lib"
   File "..\build\lib\libOMSimulator.a"
   File "..\build\lib\libOMSimulatorLua.a"
   File "..\build\lib\OMSimulator.py"
   # Create tools directory and copy files in it
-  SetOutPath "$INSTDIR\tools"
+  SetOutPath "\\?\$INSTDIR\tools"
   # copy the setup file / readme
   File "$%OMDEV%\tools\MSYS_SETUP*"
   # Create msys directory and copy files in it
-  SetOutPath "$INSTDIR\tools\msys"
+  SetOutPath "\\?\$INSTDIR\tools\msys"
 !if ${PLATFORMVERSION} == "32"
   File /r /x "mingw64" /x "group" /x "passwd" /x "pacman.log" /x "tmp\*.*" /x "*.pyc" /x "libQt5*.*" \
       /x "moc.exe" /x "qt*.qch" /x "Qt5*.dll" /x "libwx*.*" /x "libgtk*.*" /x "qtcreator" /x "rcc.exe" \
@@ -185,17 +185,17 @@ Section "OpenModelica Core" Section1
       "$%OMDEV%\tools\msys\*"
 !endif
   # create OMTLMSimulator directory
-  SetOutPath "$INSTDIR\OMTLMSimulator\bin"
+  SetOutPath "\\?\$INSTDIR\OMTLMSimulator\bin"
   File /r "..\OMSimulator\OMTLMSimulator\bin\*"
-  SetOutPath "$INSTDIR\OMTLMSimulator\Documentation"
+  SetOutPath "\\?\$INSTDIR\OMTLMSimulator\Documentation"
   File /oname=OMTLMSimulator.pdf "..\OMSimulator\OMTLMSimulator\Documentation\TLMPlugin.pdf"
-  SetOutPath "$INSTDIR\OMTLMSimulator\CompositeModels"
+  SetOutPath "\\?\$INSTDIR\OMTLMSimulator\CompositeModels"
   File /r "..\OMSimulator\OMTLMSimulator\CompositeModels\*"
   # Create share directory and copy files in it
-  SetOutPath "$INSTDIR\share"
+  SetOutPath "\\?\$INSTDIR\share"
   File /r /x "*.svn" /x "*.git" "..\build\share\*"
   # Copy the OpenModelica web page & users guide url shortcut
-  SetOutPath "$INSTDIR\share\doc\omc"
+  SetOutPath "\\?\$INSTDIR\share\doc\omc"
   File "..\doc\OpenModelica Project Online.url"
   File "..\doc\OpenModelicaUsersGuide.url"
 SectionEnd
@@ -206,105 +206,105 @@ SectionGroup "Modelica Standard Library" SectionGroup1
 Section "Complex 3.2.1.mo"
   SectionIn RO
   # Create lib\omlibrary directory and copy files in it
-  SetOutPath "$INSTDIR\lib\omlibrary"
+  SetOutPath "\\?\$INSTDIR\lib\omlibrary"
   File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\Complex 3.2.1.mo"
 SectionEnd
 
 Section "Modelica 3.2.1"
   SectionIn RO
   # Create lib\omlibrary directory and copy files in it
-  SetOutPath "$INSTDIR\lib\omlibrary"
+  SetOutPath "\\?\$INSTDIR\lib\omlibrary"
   File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\Modelica 3.2.1"
 SectionEnd
 
 Section "ModelicaTest 3.2.1"
   SectionIn RO
   # Create lib\omlibrary directory and copy files in it
-  SetOutPath "$INSTDIR\lib\omlibrary"
+  SetOutPath "\\?\$INSTDIR\lib\omlibrary"
   File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\ModelicaTest 3.2.1"
 SectionEnd
 
 Section "ModelicaServices 3.2.1"
   SectionIn RO
   # Create lib\omlibrary directory and copy files in it
-  SetOutPath "$INSTDIR\lib\omlibrary"
+  SetOutPath "\\?\$INSTDIR\lib\omlibrary"
   File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\ModelicaServices 3.2.1"
 SectionEnd
 
 Section "Complex 3.2.2.mo"
   SectionIn RO
   # Create lib\omlibrary directory and copy files in it
-  SetOutPath "$INSTDIR\lib\omlibrary"
+  SetOutPath "\\?\$INSTDIR\lib\omlibrary"
   File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\Complex 3.2.2.mo"
 SectionEnd
 
 Section "Modelica 3.2.2"
   SectionIn RO
   # Create lib\omlibrary directory and copy files in it
-  SetOutPath "$INSTDIR\lib\omlibrary"
+  SetOutPath "\\?\$INSTDIR\lib\omlibrary"
   File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\Modelica 3.2.2"
 SectionEnd
 
 Section "ModelicaTest 3.2.2"
   SectionIn RO
   # Create lib\omlibrary directory and copy files in it
-  SetOutPath "$INSTDIR\lib\omlibrary"
+  SetOutPath "\\?\$INSTDIR\lib\omlibrary"
   File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\ModelicaTest 3.2.2"
 SectionEnd
 
 Section "ModelicaServices 3.2.2"
   SectionIn RO
   # Create lib\omlibrary directory and copy files in it
-  SetOutPath "$INSTDIR\lib\omlibrary"
+  SetOutPath "\\?\$INSTDIR\lib\omlibrary"
   File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\ModelicaServices 3.2.2"
 SectionEnd
 
 Section "Complex 3.2.3.mo"
   SectionIn RO
   # Create lib\omlibrary directory and copy files in it
-  SetOutPath "$INSTDIR\lib\omlibrary"
+  SetOutPath "\\?\$INSTDIR\lib\omlibrary"
   File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\Complex 3.2.3.mo"
 SectionEnd
 
 Section "Modelica 3.2.3"
   SectionIn RO
   # Create lib\omlibrary directory and copy files in it
-  SetOutPath "$INSTDIR\lib\omlibrary"
+  SetOutPath "\\?\$INSTDIR\lib\omlibrary"
   File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\Modelica 3.2.3"
 SectionEnd
 
 Section "ModelicaTest 3.2.3"
   SectionIn RO
   # Create lib\omlibrary directory and copy files in it
-  SetOutPath "$INSTDIR\lib\omlibrary"
+  SetOutPath "\\?\$INSTDIR\lib\omlibrary"
   File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\ModelicaTest 3.2.3"
 SectionEnd
 
 Section "ModelicaServices 3.2.3"
   SectionIn RO
   # Create lib\omlibrary directory and copy files in it
-  SetOutPath "$INSTDIR\lib\omlibrary"
+  SetOutPath "\\?\$INSTDIR\lib\omlibrary"
   File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\ModelicaServices 3.2.3"
 SectionEnd
 
 Section "ModelicaReference"
   SectionIn RO
   # Create lib\omlibrary directory and copy files in it
-  SetOutPath "$INSTDIR\lib\omlibrary"
+  SetOutPath "\\?\$INSTDIR\lib\omlibrary"
   File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\ModelicaReference"
 SectionEnd
 
 Section "Modelica_DeviceDrivers 1.7.1"
   SectionIn RO
   # Create lib\omlibrary directory and copy files in it
-  SetOutPath "$INSTDIR\lib\omlibrary"
+  SetOutPath "\\?\$INSTDIR\lib\omlibrary"
   File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\Modelica_DeviceDrivers 1.7.1"
 SectionEnd
 
 Section "Modelica_Synchronous 0.93.0"
   SectionIn RO
   # Create lib\omlibrary directory and copy files in it
-  SetOutPath "$INSTDIR\lib\omlibrary"
+  SetOutPath "\\?\$INSTDIR\lib\omlibrary"
   File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\Modelica_Synchronous 0.93.0"
 SectionEnd
 
@@ -367,7 +367,7 @@ Section -post SEC0001
   WriteUninstaller $INSTDIR\Uninstall.exe
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
   # set the output path to temp directory which is used as a start in option for shortcuts.
-  SetOutPath "$TEMP"
+  SetOutPath "\\?\$TEMP"
   # create shortcuts
   CreateDirectory "$SMPROGRAMS\$StartMenuGroup"
   CreateShortCut "$SMPROGRAMS\$StartMenuGroup\OpenModelica Connection Editor.lnk" "$INSTDIR\bin\OMEdit.exe" \
@@ -380,7 +380,7 @@ Section -post SEC0001
   "" "$INSTDIR\icons\omshell.ico"
   CreateShortCut "$SMPROGRAMS\$StartMenuGroup\OpenModelica Website.lnk" "$INSTDIR\share\doc\omc\OpenModelica Project Online.url" \
   "" "$INSTDIR\icons\IExplorer.ico"
-  SetOutPath "$INSTDIR\"
+  SetOutPath "\\?\$INSTDIR\"
   CreateShortCut "$SMPROGRAMS\$StartMenuGroup\Uninstall OpenModelica.lnk" "$INSTDIR\Uninstall.exe" \
   "" "$INSTDIR\icons\OpenModelica.ico"
   CreateDirectory "$SMPROGRAMS\$StartMenuGroup\Documentation"
