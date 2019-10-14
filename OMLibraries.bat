@@ -39,7 +39,7 @@ for /l %%N in (1 1 %file.count%) do (
   :: if everything is ok then create a section for the library
   if defined VALIDLIBRARY (
     echo Section "!LIBRARY!"
-    echo   SetOutPath "$INSTDIR\lib\omlibrary"
+    echo   SetOutPath "\\?\$INSTDIR\lib\omlibrary"
     echo   File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\!LIBRARY!"
     echo SectionEnd
   )
