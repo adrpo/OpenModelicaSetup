@@ -84,7 +84,8 @@ mkdir -p ${OMC_INSTALL_PREFIX}
 
 # update OpenModelicaSetup
 cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}/OMSetup
-svn up . --accept theirs-full
+git checkout master
+git pull
 
 # build OpenModelica
 cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}
