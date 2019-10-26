@@ -57,9 +57,8 @@ git reset --hard "$OPENMODELICA_BRANCH" || exit 1
 git submodule update --force --init --recursive || exit 1
 
 # get the revision
-cd OMCompiler
 export REVISION=`git describe --match "v*.*" --always`
-cd ..
+
 # Directory prefix
 export OMC_INSTALL_PREFIX="/c/dev/OpenModelica_releases/${OM_ENCRYPT}${REVISION}/"
 # make the file prefix
