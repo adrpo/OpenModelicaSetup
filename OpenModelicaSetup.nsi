@@ -122,7 +122,7 @@ Section "OpenModelica Core" Section1
   # Create icons directory and copy files in it
   SetOutPath "\\?\$INSTDIR\icons"
   File /r /x "*.svn" "icons\*"
-  File "..\OMEdit\OMEdit\OMEditGUI\Resources\icons\omedit.ico"
+  File "..\OMEdit\OMEditLIB\Resources\icons\omedit.ico"
   File "..\OMOptim\OMOptim\GUI\Resources\omoptim.ico"
   File "..\OMPlot\OMPlot\OMPlotGUI\Resources\icons\omplot.ico"
   File "..\OMShell\OMShell\OMShellGUI\Resources\omshell.ico"
