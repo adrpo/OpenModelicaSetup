@@ -118,6 +118,8 @@ echo "Building MSVC CPP runtime"
 make -f 'Makefile.omdev.mingw' ${MAKETHREADS} BUILDTYPE=Release VSVERSION=2013 runtimeCPPmsvcinstall
 echo "Building CPP runtime"
 make -f 'Makefile.omdev.mingw' ${MAKETHREADS} BUILDTYPE=Release runtimeCPPinstall
+echo "Copying OMSens"
+make -f 'Makefile.omdev.mingw' ${MAKETHREADS} omsens
 
 # wget the html & pdf versions of OpenModelica users guide
 cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}/build/share/doc/omc
