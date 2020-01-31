@@ -198,6 +198,9 @@ Section "OpenModelica Core" Section1
   SetOutPath "\\?\$INSTDIR\share\doc\omc"
   File "..\doc\OpenModelica Project Online.url"
   File "..\doc\OpenModelicaUsersGuide.url"
+  # Copy OMSens directory
+  SetOutPath "\\?\$INSTDIR\OMSens"
+  File /r /x ".git*" "..\build\OMSens\*"
 SectionEnd
 LangString DESC_Section1 ${LANG_ENGLISH} "Installs all the OpenModelica features."
 
