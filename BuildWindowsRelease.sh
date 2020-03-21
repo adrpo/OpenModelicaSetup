@@ -95,12 +95,6 @@ make -f 'Makefile.omdev.mingw' ${MAKETHREADS} gitclean || make -f 'Makefile.omde
 make -f 'Makefile.omdev.mingw' ${MAKETHREADS} clean
 cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}
 
-# clone OMEncryption if needed
-if [ "${OMENCRYPTION}" = "yes" ]; then
-  rm -rf OMEncryption
-  git clone https://github.com/OpenModelica/OMEncryption
-fi
-
 echo "Building OpenModelica and OpenModelica libraries"
 # make sure we break on error!
 set -e
