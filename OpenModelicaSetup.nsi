@@ -111,9 +111,15 @@ Section "OpenModelica Core" Section1
   File "..\build\bin\*"
   File "..\OSMC-License.txt"
   # Copy the openssl binaries
-  File "bin\libeay32.dll"
-  File "bin\libssl32.dll"
-  File "bin\ssleay32.dll"
+!if ${PLATFORMVERSION} == "32"
+  File "bin\32bit\libeay32.dll"
+  File "bin\32bit\libssl32.dll"
+  File "bin\32bit\ssleay32.dll"
+!else
+  File "bin\64bit\libeay32.dll"
+  File "bin\64bit\libssl-1_1-x64.dll"
+  File "bin\64bit\ssleay32.dll"
+!endif
   # Copy the qt plugins
   File /r /x "*.svn" "$%OMDEV%\tools\msys\mingw${PLATFORMVERSION}\share\qt5\plugins\*"
   # Create the bin\osgPlugins-3.5.1 directory
