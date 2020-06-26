@@ -51,6 +51,8 @@ git pull
 cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}
 git fetch && git fetch --tags
 
+# attempt to reset to origin
+git checkout "$OPENMODELICA_BRANCH" && git reset --hard "origin/$OPENMODELICA_BRANCH" || true
 git reset --hard "$OPENMODELICA_BRANCH" && git checkout "$OPENMODELICA_BRANCH" && git submodule update --force --init --recursive && git pull --recurse-submodules && git fetch && git fetch --tags || exit 1
 git checkout -f "$OPENMODELICA_BRANCH" || exit 1
 git reset --hard "$OPENMODELICA_BRANCH" || exit 1
