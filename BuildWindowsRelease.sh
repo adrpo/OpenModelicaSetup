@@ -117,6 +117,13 @@ make -f 'Makefile.omdev.mingw' ${MAKETHREADS} BUILDTYPE=Release runtimeCPPinstal
 echo "Copying OMSens"
 make -f 'Makefile.omdev.mingw' ${MAKETHREADS} omsens
 
+echo "OMJava scripting"
+cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}
+rm -rf OMJava
+git clone https://github.com/OpenModelica/OMJava.git
+cd OMJava && make dep && make install
+cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}
+
 # wget the html & pdf versions of OpenModelica users guide
 cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}/build/share/doc/omc
 wget --no-check-certificate https://openmodelica.org/doc/openmodelica-doc-latest.tar.xz
