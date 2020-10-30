@@ -124,7 +124,7 @@ Section "OpenModelica Core" Section1
   File /r /x "*.svn" "$%OMDEV%\tools\msys\mingw${PLATFORMVERSION}\share\qt5\plugins\*"
   # Create the bin\osgPlugins-3.5.1 directory
   SetOutPath "\\?\$INSTDIR\bin\osgPlugins-3.5.1"
-  File /r /x "*.svn" "$%OMDEV%\tools\msys\mingw${PLATFORMVERSION}\bin\osgPlugins-3.5.1\*"
+  File /r /x "*.svn" "$%OMDEV%\tools\msys\mingw${PLATFORMVERSION}\bin\osgPlugins-3.6.5\*"
   # Create icons directory and copy files in it
   SetOutPath "\\?\$INSTDIR\icons"
   File /r /x "*.svn" "icons\*"
