@@ -100,7 +100,7 @@ cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}
 echo "Building OpenModelica and OpenModelica libraries"
 # make sure we break on error!
 set -e
-make -f 'Makefile.omdev.mingw' ${MAKETHREADS} ${OM_ENCRYPT_FLAGS} omc omc-diff omlibrary-all qtclients
+make -f 'Makefile.omdev.mingw' ${MAKETHREADS} ${OM_ENCRYPT_FLAGS} omc omc-diff omlibrary-core qtclients
 cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}
 echo "Installing Python scripting"
 rm -rf OMPython
