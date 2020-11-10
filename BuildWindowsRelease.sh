@@ -220,14 +220,14 @@ ls -lah ${OMC_INSTALL_PREFIX}
 
 cd ${OMC_INSTALL_PREFIX}
 # move the last nightly build to the older location
-ssh ${SSHUSER}@build.openmodelica.org <<ENDSSH
+ssh -i $HOME/.ssh/id_rsa -o UserKnownHostsFile=$HOME/.ssh/known_hosts ${SSHUSER}@build.openmodelica.org <<ENDSSH
 #commands to run on remote host
 cd public_html/omc/builds/windows/nightly-builds/${OM_ENCRYPT}${PLATFORM}/
 #rm -f older/*.* || true
 mv -f OpenModelica* older/ || true
 ENDSSH
-scp OpenModelica*${PLATFORM}* ${SSHUSER}@build.openmodelica.org:public_html/omc/builds/windows/nightly-builds/${OM_ENCRYPT}${PLATFORM}/
-ssh ${SSHUSER}@build.openmodelica.org <<ENDSSH
+scp  -i $HOME/.ssh/id_rsa -o UserKnownHostsFile=$HOME/.ssh/known_hosts OpenModelica*${PLATFORM}* ${SSHUSER}@build.openmodelica.org:public_html/omc/builds/windows/nightly-builds/${OM_ENCRYPT}${PLATFORM}/
+ssh  -i $HOME/.ssh/id_rsa -o UserKnownHostsFile=$HOME/.ssh/known_hosts ${SSHUSER}@build.openmodelica.org <<ENDSSH
 #commands to run on remote host
 cd public_html/omc/builds/windows/nightly-builds/${OM_ENCRYPT}${PLATFORM}/
 pwd
