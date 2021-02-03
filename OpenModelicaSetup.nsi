@@ -284,6 +284,9 @@ Section -Main SEC0000
   FileClose $4
   # set the rights for all users
   AccessControlW::GrantOnFile "$INSTDIR" "(BU)" "FullAccess"
+  # Remove any OPENMODELICALIBRARY environment variable
+  DeleteRegValue ${ENV_HKCU} OPENMODELICALIBRARY
+  DeleteRegValue ${ENV_HKLM} OPENMODELICALIBRARY
   # create environment variables
   IfSilent KeepOMDEV ; if silent install mode is enabled then skip OMDEV message.
   ReadRegStr $R0 ${ENV_HKLM} OMDEV
@@ -303,12 +306,10 @@ RemoveOMDEV:
   DeleteRegValue ${ENV_HKLM} OMDEV
   DeleteRegValue ${ENV_HKCU} OMDEV
 KeepOMDEV:
-  StrCmp $MultiUser.InstallMode "AllUsers" 0 +4
+  StrCmp $MultiUser.InstallMode "AllUsers" 0 +3
     WriteRegExpandStr ${ENV_HKLM} OPENMODELICAHOME "$INSTDIR\"
-    WriteRegExpandStr ${ENV_HKLM} OPENMODELICALIBRARY "$INSTDIR\lib\omlibrary"
-    Goto +3
+    Goto +2
     WriteRegExpandStr ${ENV_HKCU} OPENMODELICAHOME "$INSTDIR\"
-    WriteRegExpandStr ${ENV_HKCU} OPENMODELICALIBRARY "$INSTDIR\lib\omlibrary"
   # make sure windows knows about the change i.e we created the environment variables.
   SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
 SectionEnd
@@ -384,13 +385,11 @@ Section "Uninstall"
   FileSeek $4 0 ; we want to start reading at the 0th byte
   FileRead $4 $1 ; we read until the end of line (including carriage return and new line) and save it to $1
   FileClose $4 ; and close the file
-  StrCmp $1 "AllUsers" 0 +5
+  StrCmp $1 "AllUsers" 0 +4
     DeleteRegValue ${ENV_HKLM} OPENMODELICAHOME
-    DeleteRegValue ${ENV_HKLM} OPENMODELICALIBRARY
     SetShellVarContext all
-    Goto +4
+    Goto +3
     DeleteRegValue ${ENV_HKCU} OPENMODELICAHOME
-    DeleteRegValue ${ENV_HKCU} OPENMODELICALIBRARY
     SetShellVarContext current
   DeleteRegKey SHCTX "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\OpenModelica"
   Delete $INSTDIR\Uninstall.exe
@@ -482,7 +481,6 @@ FunctionEnd
 Function LaunchOMEdit
   ; Yes we need to set environment variables before starting OMEdit because nsis can't read the new environment variables set by the installer.
   System::Call 'Kernel32::SetEnvironmentVariable(t, t) i("OPENMODELICAHOME", "$INSTDIR\").r0'
-  System::Call 'Kernel32::SetEnvironmentVariable(t, t) i("OPENMODELICALIBRARY", "$INSTDIR\lib\omlibrary").r0'
   ExecShell "" "$INSTDIR\bin\OMEdit.exe"
 FunctionEnd
 
