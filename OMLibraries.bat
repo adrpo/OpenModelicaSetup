@@ -21,10 +21,10 @@ for /l %%N in (1 1 %file.count%) do (
   :: check if .mo file
   if /i "!file.extension.%%N!" == ".mo" set VALIDLIBRARY=1
   :: Skip the default libraries
-  if /i "!file.%%N!" == "Complex 3.2.3.mo" set VALIDLIBRARY=
-  if /i "!file.%%N!" == "Modelica 3.2.3" set VALIDLIBRARY=
-  if /i "!file.%%N!" == "ModelicaTest 3.2.3" set VALIDLIBRARY=
-  if /i "!file.%%N!" == "ModelicaServices 3.2.3" set VALIDLIBRARY=
+  if /i "!file.%%N!" == "Complex 4.0.0.mo" set VALIDLIBRARY=
+  if /i "!file.%%N!" == "Modelica 4.0.0" set VALIDLIBRARY=
+  if /i "!file.%%N!" == "ModelicaTest 4.0.0" set VALIDLIBRARY=
+  if /i "!file.%%N!" == "ModelicaServices 4.0.0" set VALIDLIBRARY=
   if /i "!file.%%N!" == "ModelicaReference" set VALIDLIBRARY=
   if /i "!file.%%N!" == "Modelica_DeviceDrivers 1.8.2" set VALIDLIBRARY=
   if /i "!file.%%N!" == "Modelica_Synchronous 0.93.0" set VALIDLIBRARY=
