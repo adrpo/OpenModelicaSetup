@@ -214,6 +214,34 @@ LangString DESC_Section1 ${LANG_ENGLISH} "Installs all the OpenModelica features
 
 SectionGroup "Modelica Standard Library" SectionGroup1
 
+Section "Complex 3.2.3.mo"
+  SectionIn RO
+  # Create lib\omlibrary directory and copy files in it
+  SetOutPath "\\?\$INSTDIR\lib\omlibrary"
+  File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\Complex 3.2.3.mo"
+SectionEnd
+
+Section "Modelica 3.2.3"
+  SectionIn RO
+  # Create lib\omlibrary directory and copy files in it
+  SetOutPath "\\?\$INSTDIR\lib\omlibrary"
+  File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\Modelica 3.2.3"
+SectionEnd
+
+Section "ModelicaTest 3.2.3"
+  SectionIn RO
+  # Create lib\omlibrary directory and copy files in it
+  SetOutPath "\\?\$INSTDIR\lib\omlibrary"
+  File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\ModelicaTest 3.2.3"
+SectionEnd
+
+Section "ModelicaServices 3.2.3"
+  SectionIn RO
+  # Create lib\omlibrary directory and copy files in it
+  SetOutPath "\\?\$INSTDIR\lib\omlibrary"
+  File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\ModelicaServices 3.2.3"
+SectionEnd
+
 Section "Complex 4.0.0.mo"
   SectionIn RO
   # Create lib\omlibrary directory and copy files in it
@@ -481,6 +509,8 @@ FunctionEnd
 Function LaunchOMEdit
   ; Yes we need to set environment variables before starting OMEdit because nsis can't read the new environment variables set by the installer.
   System::Call 'Kernel32::SetEnvironmentVariable(t, t) i("OPENMODELICAHOME", "$INSTDIR\").r0'
+  ; Try to unset OPENMODELICALIBRARY environment variable
+  System::Call 'Kernel32::SetEnvironmentVariable(t, t) i("OPENMODELICALIBRARY", "").r0'
   ExecShell "" "$INSTDIR\bin\OMEdit.exe"
 FunctionEnd
 
