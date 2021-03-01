@@ -7,11 +7,19 @@ Unicode true
   !error "Argument PLATFORMVERSION is not set. Call with argument /DPLATFORMVERSION=32 or /DPLATFORMVERSION=64"
 !endif
 
-Name OpenModelica1.18.0-dev-${PLATFORMVERSION}bit
+!ifndef OMVERSION
+  !error "Argument OMVERSION is not set. Call with argument /DOMVERSION=OpenModelica version tag"
+!endif
+
+!ifndef PRODUCTVERSION
+  !error "Argument PRODUCTVERSION is not set. Call with argument /DPRODUCTVERSION=OpenModelica version"
+!endif
+
+Name OpenModelica${OMVERSION}-${PLATFORMVERSION}bit
 
 # General Symbol Definitions
 !define REGKEY "SOFTWARE\OpenModelica"
-!define VERSION 1.18.0-dev-${PLATFORMVERSION}bit
+!define VERSION ${OMVERSION}-${PLATFORMVERSION}bit
 !define COMPANY "Open Source Modelica Consortium (OSMC) and Linköping University (LiU)."
 !define URL "http://www.openmodelica.org/"
 BrandingText "Copyright $2 OpenModelica"  ; The $2 variable is filled in the Function .onInit after calling GetLocalTime function.
@@ -92,7 +100,7 @@ OutFile "OpenModelica.exe"
 CRCCheck on
 XPStyle on
 ShowInstDetails hide
-VIProductVersion 1.18.0.0
+VIProductVersion ${PRODUCTVERSION}
 VIAddVersionKey ProductName "OpenModelica"
 VIAddVersionKey ProductVersion "${VERSION}"
 VIAddVersionKey CompanyName "${COMPANY}"

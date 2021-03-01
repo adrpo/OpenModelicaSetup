@@ -60,6 +60,15 @@ git submodule update --force --init --recursive || exit 1
 
 # get the revision
 export REVISION=`git describe --match "v*.*" --always`
+export REVISION_SHORT=`git describe --match "v*.*" --always --abbrev=0`
+# remove the starting v from the string
+REVISION_SHORT="${REVISION_SHORT:1}"
+export PRODUCT_VERSION=${REVISION_SHORT}
+# strip the string after "-" to get just the version number
+BEGIN=${PRODUCT_VERSION/-*/}
+PRODUCT_VERSION=${PRODUCT_VERSION::${#BEGIN}}
+# make a valid VIProductVersion
+PRODUCT_VERSION=${PRODUCT_VERSION}.0
 
 # Directory prefix
 export OMC_INSTALL_PREFIX="/c/dev/OpenModelica_releases/${OM_ENCRYPT}${REVISION}/"
@@ -153,7 +162,7 @@ make OMTLMSimulatorStandalone
 # build the installer
 cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}/OMSetup
 rm -rf 	OMLibraries.nsh
-makensis //DPLATFORMVERSION="${PLATFORM::-3}" OpenModelicaSetup.nsi > trace.txt 2>&1 || cat trace.txt
+makensis //DPLATFORMVERSION="${PLATFORM::-3}" //DOMVERSION="${REVISION_SHORT}" //DPRODUCTVERSION=${PRODUCT_VERSION} OpenModelicaSetup.nsi > trace.txt 2>&1 || cat trace.txt
 # move the installer
 mv OpenModelica.exe ${OMC_INSTALL_FILE_PREFIX}.exe
 
