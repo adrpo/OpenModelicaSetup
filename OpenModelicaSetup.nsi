@@ -519,7 +519,9 @@ Function LaunchOMEdit
   System::Call 'Kernel32::SetEnvironmentVariable(t, t) i("OPENMODELICAHOME", "$INSTDIR\").r0'
   ; Try to unset OPENMODELICALIBRARY environment variable
   System::Call 'Kernel32::SetEnvironmentVariable(t, t) i("OPENMODELICALIBRARY", NULL).r0'
-  ExecShell "" "$INSTDIR\bin\OMEdit.exe"
+  ; ExecShell passes the elevated UAC of the installer process to OMEdit and as a result drag and drop on OMEdit will not work. Use Exec instead of ExecShell
+  ; ExecShell "" "$INSTDIR\bin\OMEdit.exe"
+  Exec '"$WINDIR\explorer.exe" "$INSTDIR\bin\OMEdit.exe"'
 FunctionEnd
 
 # Uninstaller functions
