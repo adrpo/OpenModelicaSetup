@@ -118,6 +118,9 @@ Section "OpenModelica Core" Section1
   SetOutPath "\\?\$INSTDIR\bin"
   File "..\build\bin\*"
   File "..\OSMC-License.txt"
+  # Create bin\ffi directory and copy files in it
+  SetOutPath "\\?\$INSTDIR\bin\ffi"
+  File "..\build\bin\ffi\*"
   # Copy the openssl binaries
 !if ${PLATFORMVERSION} == "32"
   File "bin\32bit\libeay32.dll"
