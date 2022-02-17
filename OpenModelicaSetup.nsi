@@ -118,9 +118,6 @@ Section "OpenModelica Core" Section1
   SetOutPath "\\?\$INSTDIR\bin"
   File "..\build\bin\*"
   File "..\OSMC-License.txt"
-  # Create bin\ffi directory and copy files in it
-  SetOutPath "\\?\$INSTDIR\bin\ffi"
-  File "..\build\bin\ffi\*"
   # Copy the openssl binaries
 !if ${PLATFORMVERSION} == "32"
   File "bin\32bit\libeay32.dll"
@@ -136,6 +133,9 @@ Section "OpenModelica Core" Section1
   # Create the bin\osgPlugins-3.5.1 directory
   SetOutPath "\\?\$INSTDIR\bin\osgPlugins-3.5.1"
   File /r /x "*.svn" "$%OMDEV%\tools\msys\mingw${PLATFORMVERSION}\bin\osgPlugins-3.6.5\*"
+  # Create bin\ffi directory and copy files in it
+  SetOutPath "\\?\$INSTDIR\bin\ffi"
+  File "..\build\bin\ffi\*"
   # Create icons directory and copy files in it
   SetOutPath "\\?\$INSTDIR\icons"
   File /r /x "*.svn" "icons\*"
