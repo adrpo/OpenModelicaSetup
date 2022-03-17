@@ -27,6 +27,17 @@ fi
 # set the path to our tools
 export PATH=$PATH:/c/Program\ Files/TortoiseSVN/bin/:/c/bin/jdk/bin:/c/bin/nsis3.04/:/c/bin/git/bin
 
+XPREFIX="x64"
+if ["${PLATFORM}" = "32bit" ]; then
+	XPREFIX="x86"
+fi
+
+SIGNTOOL=`find /c/Program\ Files\ \(x86\)/Windows\ Kits/10/ -wholename "*${XPREFIX}/signtool.exe" | tail -1`
+if [ "${SIGNTOOL}" = "" ]; then 
+ echo "Could not find signtool.exe"
+ exit 1
+fi
+
 # don't exit on error
 set +e
 # make sure we use the windows temp directory and not the msys/tmp one!
@@ -166,6 +177,10 @@ if ! makensis //DPLATFORMVERSION="${PLATFORM::-3}" //DOMVERSION="${REVISION_SHOR
   cat trace.txt
   exit 1
 fi
+
+#sign the installer
+${SIGNTOOL} sign /n "Open Source Modelica Consortium" /t http://time.certum.pl/ /fd sha256 /v OpenModelica.exe
+
 # move the installer
 mv OpenModelica.exe ${OMC_INSTALL_FILE_PREFIX}.exe
 
