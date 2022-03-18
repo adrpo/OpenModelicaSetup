@@ -179,7 +179,7 @@ if ! makensis //DPLATFORMVERSION="${PLATFORM::-3}" //DOMVERSION="${REVISION_SHOR
 fi
 
 #sign the installer
-${SIGNTOOL} sign /n "Open Source Modelica Consortium" /t http://time.certum.pl/ /fd sha256 /v OpenModelica.exe
+"${SIGNTOOL}" sign /n "Open Source Modelica Consortium" /t http://time.certum.pl/ /fd sha256 /v OpenModelica.exe
 
 # move the installer
 mv OpenModelica.exe ${OMC_INSTALL_FILE_PREFIX}.exe
