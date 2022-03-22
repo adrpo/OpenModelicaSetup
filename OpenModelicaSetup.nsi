@@ -286,7 +286,6 @@ LangString DESC_SectionGroup1 ${LANG_ENGLISH} "Installs the Modelica Standard Li
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${Section1} $(DESC_Section1)
   !insertmacro MUI_DESCRIPTION_TEXT ${SectionGroup1} $(DESC_SectionGroup1)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SectionGroup2} $(DESC_SectionGroup2)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 Section -Main SEC0000
@@ -437,7 +436,6 @@ SectionEnd
 
 # Installer functions
 Function .onInit
-  !insertmacro SetSectionFlag ${SectionGroup1} ${SF_RO}
   # Read the current local time of the system and then extract the year from it. This value is then used in Branding Text.
   Call GetLocalTime
   Pop $0  ; Day
