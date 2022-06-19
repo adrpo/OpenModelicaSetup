@@ -264,6 +264,7 @@ ln -s OpenModelica-${REVISION}-${PLATFORM}.exe OpenModelica-latest.exe
 ls -lah
 echo "md5sum OpenModelica-latest.exe | cut -f 1 -d ' ' > OpenModelica-latest.exe.md5sum"
 md5sum OpenModelica-latest.exe | cut -f 1 -d ' ' > OpenModelica-latest.exe.md5sum
+cp OpenModelica-latest.exe.md5sum OpenModelica-${REVISION}-${PLATFORM}.exe.md5sum
 cat OpenModelica-latest.exe.md5sum
 ls -lah
 ENDSSH
