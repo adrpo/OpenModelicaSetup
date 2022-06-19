@@ -262,9 +262,9 @@ pwd
 echo "ln -s OpenModelica-${REVISION}-${PLATFORM}.exe OpenModelica-latest.exe"
 ln -s OpenModelica-${REVISION}-${PLATFORM}.exe OpenModelica-latest.exe
 ls -lah
-echo "md5sum OpenModelica-latest.exe | cut -f 1 -d ' ' > OpenModelica-latest.md5sum"
-md5sum OpenModelica-latest.exe | cut -f 1 -d ' ' > OpenModelica-latest.md5sum
-cat OpenModelica-latest.md5sum
+echo "md5sum OpenModelica-latest.exe | cut -f 1 -d ' ' > OpenModelica-latest.exe.md5sum"
+md5sum OpenModelica-latest.exe | cut -f 1 -d ' ' > OpenModelica-latest.exe.md5sum
+cat OpenModelica-latest.exe.md5sum
 ls -lah
 ENDSSH
 echo "All done!"
