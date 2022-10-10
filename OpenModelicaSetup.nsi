@@ -36,7 +36,6 @@ BrandingText "Copyright $2 OpenModelica"  ; The $2 variable is filled in the Fun
 !define MUI_WELCOMEFINISHPAGE_BITMAP "images\openmodelica.bmp"
 !define MUI_WELCOMEPAGE_TITLE_3LINES
 !define MUI_WELCOMEPAGE_TEXT "The installer will guide you through the steps required to install $(^Name) on your computer.$\r$\n$\r$\n$\r$\nThe package includes OpenModelica, a Modelica modeling, compilation and simulation environment based on free software."
-!define MUI_COMPONENTSPAGE_SMALLDESC
 !define MUI_STARTMENUPAGE_REGISTRY_ROOT SHCTX
 !define MUI_STARTMENUPAGE_NODISABLE
 !define MUI_STARTMENUPAGE_REGISTRY_KEY ${REGKEY}
@@ -84,7 +83,6 @@ Var StartMenuGroup
 
 # Installer pages
 !insertmacro MUI_PAGE_WELCOME
-!insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_STARTMENU Application $StartMenuGroup
 !insertmacro MUI_PAGE_INSTFILES
@@ -147,6 +145,12 @@ Section "OpenModelica Core" Section1
   # Create include\omc directory and copy files in it
   SetOutPath "\\?\$INSTDIR\include\omc"
   File /r /x "*.svn" "..\build\include\omc\*"
+  # Create lib\omlibrary\libraries and copy index.json
+  SetOutPath "$INSTDIR\lib\omlibrary\libraries"
+  File /r /x "*.svn" /x "*.git" "..\OMCompiler\Compiler\scripts\installMSL\.openmodelica\libraries\index.json"
+  # Create lib\omlibrary\cache and copy cache
+  SetOutPath "$INSTDIR\lib\omlibrary\cache"
+  File /r /x "*.svn" /x "*.git" "..\OMCompiler\Compiler\scripts\installMSL\.openmodelica\cache\*"
   # Create lib\omc directory and copy files in it
   SetOutPath "\\?\$INSTDIR\lib\omc"
   File /r /x "*.svn" /x "*.git" "..\build\lib\omc\*"
@@ -221,72 +225,6 @@ Section "OpenModelica Core" Section1
   SetOutPath "\\?\$INSTDIR\share\OMSens"
   File /r /x ".git*" "..\build\share\OMSens\*"
 SectionEnd
-LangString DESC_Section1 ${LANG_ENGLISH} "Installs all the OpenModelica features."
-
-SectionGroup "Modelica Standard Library" SectionGroup1
-
-Section "Complex 3.2.3.mo"
-  # Create lib\omlibrary directory and copy files in it
-  SetOutPath "\\?\$INSTDIR\lib\omlibrary"
-  File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\Complex 3.2.3.mo"
-SectionEnd
-
-Section "Modelica 3.2.3"
-  # Create lib\omlibrary directory and copy files in it
-  SetOutPath "\\?\$INSTDIR\lib\omlibrary"
-  File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\Modelica 3.2.3"
-SectionEnd
-
-Section "ModelicaTest 3.2.3"
-  # Create lib\omlibrary directory and copy files in it
-  SetOutPath "\\?\$INSTDIR\lib\omlibrary"
-  File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\ModelicaTest 3.2.3"
-SectionEnd
-
-Section "ModelicaServices 3.2.3"
-  # Create lib\omlibrary directory and copy files in it
-  SetOutPath "\\?\$INSTDIR\lib\omlibrary"
-  File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\ModelicaServices 3.2.3"
-SectionEnd
-
-Section "Complex 4.0.0.mo"
-  # Create lib\omlibrary directory and copy files in it
-  SetOutPath "\\?\$INSTDIR\lib\omlibrary"
-  File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\Complex 4.0.0.mo"
-SectionEnd
-
-Section "Modelica 4.0.0"
-  # Create lib\omlibrary directory and copy files in it
-  SetOutPath "\\?\$INSTDIR\lib\omlibrary"
-  File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\Modelica 4.0.0"
-SectionEnd
-
-Section "ModelicaTest 4.0.0"
-  # Create lib\omlibrary directory and copy files in it
-  SetOutPath "\\?\$INSTDIR\lib\omlibrary"
-  File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\ModelicaTest 4.0.0"
-SectionEnd
-
-Section "ModelicaServices 4.0.0"
-  # Create lib\omlibrary directory and copy files in it
-  SetOutPath "\\?\$INSTDIR\lib\omlibrary"
-  File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\ModelicaServices 4.0.0"
-SectionEnd
-
-Section "ModelicaReference"
-  # Create lib\omlibrary directory and copy files in it
-  SetOutPath "\\?\$INSTDIR\lib\omlibrary"
-  File /r /x "*.svn" /x "*.git" "..\build\lib\omlibrary\ModelicaReference"
-SectionEnd
-
-SectionGroupEnd
-
-LangString DESC_SectionGroup1 ${LANG_ENGLISH} "Installs the Modelica Standard Library."
-
-!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-  !insertmacro MUI_DESCRIPTION_TEXT ${Section1} $(DESC_Section1)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SectionGroup1} $(DESC_SectionGroup1)
-!insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 Section -Main SEC0000
     # create the file with InstallMode

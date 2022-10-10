@@ -25,7 +25,7 @@ if [ "${OMENCRYPTION}" = "yes" ]; then
 fi
 
 # set the path to our tools
-export PATH=$PATH:/c/Program\ Files/TortoiseSVN/bin/:/c/bin/jdk/bin:/c/bin/nsis3.04/:/c/bin/git/bin
+export PATH=$PATH:/c/Program\ Files/TortoiseSVN/bin/:/c/bin/jdk/bin:/c/bin/nsis3.04/:/c/bin/git/bin:/c/Python27
 
 XPREFIX="x64"
 if [ "${PLATFORM}" = "32bit" ]; then
@@ -169,6 +169,11 @@ cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}/
 make -f Makefile.omdev.mingw omsimulator
 cd OMSimulator
 make OMTLMSimulatorStandalone
+
+# generate package index for Modelica Standard Library
+cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}/OMCompiler/Compiler/scripts/installMSL
+python generateIndex.py
+/c/dev/${OM_ENCRYPT}OM${PLATFORM}/build/bin/omc.exe index.mos
 
 # build the installer
 cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}/OMSetup
