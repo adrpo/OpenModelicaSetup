@@ -145,12 +145,6 @@ Section "OpenModelica Core" Section1
   # Create include\omc directory and copy files in it
   SetOutPath "\\?\$INSTDIR\include\omc"
   File /r /x "*.svn" "..\build\include\omc\*"
-  # Create lib\omlibrary\libraries and copy index.json
-  SetOutPath "$INSTDIR\lib\omlibrary\libraries"
-  File /r /x "*.svn" /x "*.git" "..\OMCompiler\Compiler\scripts\installMSL\.openmodelica\libraries\index.json"
-  # Create lib\omlibrary\cache and copy cache
-  SetOutPath "$INSTDIR\lib\omlibrary\cache"
-  File /r /x "*.svn" /x "*.git" "..\OMCompiler\Compiler\scripts\installMSL\.openmodelica\cache\*"
   # Create lib\omc directory and copy files in it
   SetOutPath "\\?\$INSTDIR\lib\omc"
   File /r /x "*.svn" /x "*.git" "..\build\lib\omc\*"
