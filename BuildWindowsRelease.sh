@@ -21,7 +21,7 @@ export OPENMODELICA_BRANCH=$GIT_TAG
 # to build with encryption set OMENCRYPTION=Yes
 if [ "${OMENCRYPTION}" = "yes" ]; then
  export OM_ENCRYPT="e/"
- export OM_ENCRYPT_FLAGS="OMENCRYPTION=yes"
+ export OM_ENCRYPT_FLAGS="OM_ENABLE_ENCRYPTION=yes"
 fi
 
 # set the path to our tools
