@@ -67,7 +67,7 @@ cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}
 # if we build an experimental PR number skip this!
 if [[ "$OPENMODELICA_BRANCH" =~ PR_.*_experimental ]]; then
   echo "Building experimental PR build: $OPENMODELICA_BRANCH!"
-  export PR_NAME=$OPENMODELICA_BRANCH
+  export PR_NAME=_${OPENMODELICA_BRANCH}
   export PR_BUILD="PRbuilds/"
 else
   echo "Building $OPENMODELICA_BRANCH!"
