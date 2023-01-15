@@ -27,6 +27,10 @@ fi
 # set the path to our tools
 export PATH=$PATH:/c/Program\ Files/TortoiseSVN/bin/:/c/bin/jdk/bin:/c/bin/nsis3.04/:/c/bin/git/bin
 
+# is this a PR build?
+PR_BUILD=""
+PR_NAME=""
+
 XPREFIX="x64"
 if [ "${PLATFORM}" = "32bit" ]; then
 	XPREFIX="x86"
@@ -63,6 +67,8 @@ cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}
 # if we build an experimental PR number skip this!
 if [[ "$OPENMODELICA_BRANCH" =~ PR_.*_experimental ]]; then
   echo "Building experimental PR build: $OPENMODELICA_BRANCH!"
+  export PR_NAME=$OPENMODELICA_BRANCH
+  export PR_BUILD="PRbuilds/"
 else
   echo "Building $OPENMODELICA_BRANCH!"
   git fetch && git fetch --tags
@@ -75,7 +81,7 @@ fi
 git submodule update --force --init --recursive || exit 1
 
 # get the revision
-export REVISION=`git describe --match "v*.*" --always`
+export REVISION=`git describe --match "v*.*" --always`${PR_NAME}
 export REVISION_SHORT=`git describe --match "v*.*" --always --abbrev=0`
 # remove the starting v from the string
 REVISION_SHORT="${REVISION_SHORT:1}"
@@ -254,14 +260,14 @@ cd ${OMC_INSTALL_PREFIX}
 # move the last nightly build to the older location
 ssh -i $HOME/.ssh/id_rsa -o UserKnownHostsFile=$HOME/.ssh/known_hosts ${SSHUSER}@build.openmodelica.org <<ENDSSH
 #commands to run on remote host
-cd public_html/omc/builds/windows/nightly-builds/${OM_ENCRYPT}${PLATFORM}/
+cd public_html/omc/builds/windows/nightly-builds/${PR_BUILD}${OM_ENCRYPT}${PLATFORM}/
 #rm -f older/*.* || true
 mv -f OpenModelica* older/ || true
 ENDSSH
-scp  -i $HOME/.ssh/id_rsa -o UserKnownHostsFile=$HOME/.ssh/known_hosts OpenModelica*${PLATFORM}* ${SSHUSER}@build.openmodelica.org:public_html/omc/builds/windows/nightly-builds/${OM_ENCRYPT}${PLATFORM}/
+scp  -i $HOME/.ssh/id_rsa -o UserKnownHostsFile=$HOME/.ssh/known_hosts OpenModelica*${PLATFORM}* ${SSHUSER}@build.openmodelica.org:public_html/omc/builds/windows/nightly-builds/${PR_BUILD}${OM_ENCRYPT}${PLATFORM}/
 ssh  -i $HOME/.ssh/id_rsa -o UserKnownHostsFile=$HOME/.ssh/known_hosts ${SSHUSER}@build.openmodelica.org <<ENDSSH
 #commands to run on remote host
-cd public_html/omc/builds/windows/nightly-builds/${OM_ENCRYPT}${PLATFORM}/
+cd public_html/omc/builds/windows/nightly-builds/${PR_BUILD}${OM_ENCRYPT}${PLATFORM}/
 pwd
 pwd
 echo "ln -s OpenModelica-${REVISION}-${PLATFORM}.exe OpenModelica-latest.exe"
