@@ -61,7 +61,7 @@ git pull
 # update OpenModelica
 cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}
 # if we build an experimental PR number skip this!
-if [[ "$1" =~ PR_.*_experimental ]]; then
+if [[ "$OPENMODELICA_BRANCH" =~ PR_.*_experimental ]]; then
   echo "Building experimental PR build: $OPENMODELICA_BRANCH!"
 else
   echo "Building $OPENMODELICA_BRANCH!"
