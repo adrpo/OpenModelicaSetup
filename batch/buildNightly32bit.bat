@@ -7,9 +7,13 @@ REM last change: 2015-05-08
 
 if not exist "c:\OMDev\" (
   echo Checkout c:\OMDev\
-  cd c:\
-  svn co https://openmodelica.org/svn/OpenModelicaExternal/trunk/tools/windows/OMDev OMDev
-  set OMDEV=c:\OMDev
+  cd C:\
+  git clone https://openmodelica.org/git/OMDev.git OMDev
+  cd C:\OMDev
+  git checkout master
+  call SETUP_OMDEV.bat
+  call SETUP_OMDEV_Qt5.bat
+  set OMDEV=C:\OMDev
 )
 
 if not exist "c:\dev\" (
@@ -28,28 +32,28 @@ if not exist "c:\dev\OpenModelica_releases" (
  md c:\dev\OpenModelica_releases
 )
   
-if not exist "c:\dev\OpenModelica32bit\" (
-  echo Checkout c:\dev\OpenModelica32bit
+if not exist "c:\dev\OM32bit\" (
+  echo Checkout c:\dev\OM32bit
   cd c:\dev\
-  git clone --recursive https://github.com/OpenModelica/OpenModelica.git OpenModelica32bit
-  cd OpenModelica32bit
+  git clone --recursive https://github.com/OpenModelica/OpenModelica.git OM32bit
+  cd OM32bit
 )
 
-if not exist "c:\dev\OpenModelica32bit\OpenModelicaSetup\" (
-  echo Checkout c:\dev\OpenModelica32bit\OpenModelicaSetup
-  cd c:\dev\OpenModelica32bit\
-  svn co https://openmodelica.org/svn/OpenModelica/installers/windows/OpenModelicaSetup OpenModelicaSetup
+if not exist "c:\dev\OM32bit\OMSetup\" (
+  echo Checkout c:\dev\OM32bit\OMSetup
+  cd c:\dev\OM32bit\
+  git clone https://github.com/OpenModelica/OpenModelicaSetup OMSetup
 )
 
 REM update the build script first!
-cd c:\dev\OpenModelica32bit\OpenModelicaSetup
-svn up . --accept theirs-full
+cd c:\dev\OM32bit\OMSetup
+git pull
 
 REM update OMDev
 cd C:\OMDev
-svn up . --accept theirs-full
+git pull
 
 REM run the Msys script to build the release
 cd c:\dev\OpenModelica_releases\
 set MSYSTEM=MINGW32
-%OMDEV%\tools\msys\usr\bin\sh --login -i -c "time /c/dev/OpenModelica32bit/OpenModelicaSetup/BuildWindowsRelease.sh adrpo -j3 32bit %1%"
+%OMDEV%\tools\msys\usr\bin\sh --login -i -c "time /c/dev/OM32bit/OMSetup/BuildWindowsRelease.sh adrpo -j3 32bit %1%"
