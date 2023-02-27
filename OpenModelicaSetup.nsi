@@ -128,8 +128,8 @@ Section "OpenModelica Core" Section1
 !endif
   # Copy the qt plugins
   File /r /x "*.svn" "$%OMDEV%\tools\msys\mingw${PLATFORMVERSION}\share\qt5\plugins\*"
-  # Create the bin\osgPlugins-3.5.1 directory
-  SetOutPath "\\?\$INSTDIR\bin\osgPlugins-3.5.1"
+  # Create the bin\osgPlugins-3.6.5 directory
+  SetOutPath "\\?\$INSTDIR\bin\osgPlugins-3.6.5"
   File /r /x "*.svn" "$%OMDEV%\tools\msys\mingw${PLATFORMVERSION}\bin\osgPlugins-3.6.5\*"
   # Create bin\ffi directory and copy files in it
   SetOutPath "\\?\$INSTDIR\bin\ffi"
