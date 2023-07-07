@@ -21,6 +21,7 @@ export OPENMODELICA_BRANCH=$GIT_TAG
 # to build with encryption set OM_ENABLE_ENCRYPTION=yes
 if [ "${OM_ENABLE_ENCRYPTION}" = "yes" ]; then
  export OM_ENCRYPT="e/"
+ export OM_ENCRYPT_SUFFIX="-encryption"
  export OM_ENCRYPT_FLAGS="OM_ENABLE_ENCRYPTION=yes"
 fi
 
@@ -95,7 +96,7 @@ PRODUCT_VERSION=${PRODUCT_VERSION}.0
 # Directory prefix
 export OMC_INSTALL_PREFIX="/c/dev/OpenModelica_releases/${OM_ENCRYPT}${REVISION}/"
 # make the file prefix
-export OMC_INSTALL_FILE_PREFIX="${OMC_INSTALL_PREFIX}OpenModelica-${REVISION}-${PLATFORM}"
+export OMC_INSTALL_FILE_PREFIX="${OMC_INSTALL_PREFIX}OpenModelica-${REVISION}-${PLATFORM}${OM_ENCRYPT_SUFFIX}"
 
 # test if exists and exit if it does
 if [ -f "${OMC_INSTALL_FILE_PREFIX}.exe" ]; then
