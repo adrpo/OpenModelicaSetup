@@ -137,7 +137,7 @@ Section "OpenModelica Core" Section1
 !if /FILEEXISTS "..\build\bin\omc-semla\*.*"
   # Create bin\omc-semla directory and copy files in it
   SetOutPath "\\?\$INSTDIR\bin\omc-semla"
-  File /r /x "..\build\bin\omc-semla\*"
+  File /r "..\build\bin\omc-semla\*"
 !endif
   # Create icons directory and copy files in it
   SetOutPath "\\?\$INSTDIR\icons"
