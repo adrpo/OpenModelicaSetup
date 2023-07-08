@@ -134,7 +134,7 @@ Section "OpenModelica Core" Section1
   # Create bin\ffi directory and copy files in it
   SetOutPath "\\?\$INSTDIR\bin\ffi"
   File "..\build\bin\ffi\*"
-!if /FileExist "..\build\bin\omc-semla\*.*"
+!if /FILEEXISTS "..\build\bin\omc-semla\*.*"
   # Create bin\omc-semla directory and copy files in it
   SetOutPath "\\?\$INSTDIR\bin\omc-semla"
   File /r /x "..\build\bin\omc-semla\*"
