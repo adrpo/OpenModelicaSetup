@@ -95,8 +95,10 @@ PRODUCT_VERSION=${PRODUCT_VERSION}.0
 
 # Directory prefix
 export OMC_INSTALL_PREFIX="/c/dev/OpenModelica_releases/${OM_ENCRYPT}${REVISION}/"
+# file suffix
+export OMC_FILE_PREFIX="OpenModelica-${REVISION}-${PLATFORM}${OM_ENCRYPT_SUFFIX}"
 # make the file prefix
-export OMC_INSTALL_FILE_PREFIX="${OMC_INSTALL_PREFIX}OpenModelica-${REVISION}-${PLATFORM}${OM_ENCRYPT_SUFFIX}"
+export OMC_INSTALL_FILE_PREFIX="${OMC_INSTALL_PREFIX}${OMC_FILE_PREFIX}"
 
 # test if exists and exit if it does
 if [ -f "${OMC_INSTALL_FILE_PREFIX}.exe" ]; then
@@ -202,7 +204,7 @@ git log --name-status --graph --submodule > ${OMC_INSTALL_FILE_PREFIX}-ChangeLog
 
 # make the readme
 export DATESTR=`date +"%Y-%m-%d_%H-%M"`
-echo "Automatic build of OpenModelica by testwin.openmodelica.org at date: ${DATESTR} from revision: ${REVISION}" >> ${OMC_INSTALL_FILE_PREFIX}-README.txt
+echo "Automatic build of OpenModelica by *.openmodelica.org at date: ${DATESTR} from revision: ${REVISION}" >> ${OMC_INSTALL_FILE_PREFIX}-README.txt
 echo " " >> ${OMC_INSTALL_FILE_PREFIX}-README.txt
 echo "Read OpenModelica-${REVISION}-ChangeLog.txt for more info on changes." >> ${OMC_INSTALL_FILE_PREFIX}-README.txt
 echo " " >> ${OMC_INSTALL_FILE_PREFIX}-README.txt
@@ -249,9 +251,9 @@ echo "Contact us at OpenModelica@ida.liu.se for further issues or questions." >>
 #echo "Running testsuite trace"
 #make -f 'Makefile.omdev.mingw' ${MAKETHREADS} testlogwindows > tmpTime.log 2>&1
 
-echo "Check HUDSON testserver for the testsuite trace here (match revision ${REVISION} to build jobs): " >> ${OMC_INSTALL_FILE_PREFIX}-testsuite-trace.txt
-echo "  https://test.openmodelica.org/hudson/" >> ${OMC_INSTALL_FILE_PREFIX}-testsuite-trace.txt
-echo "  https://test.openmodelica.org/hudson/job/OM_Win/lastBuild/console" >> ${OMC_INSTALL_FILE_PREFIX}-testsuite-trace.txt
+echo "Check Jenkins testserver for the testsuite trace here (match revision ${REVISION} to build jobs): " >> ${OMC_INSTALL_FILE_PREFIX}-testsuite-trace.txt
+echo "  https://test.openmodelica.org/jenkins/" >> ${OMC_INSTALL_FILE_PREFIX}-testsuite-trace.txt
+echo "  https://test.openmodelica.org/jenkins/job/OM_Win/lastBuild/console" >> ${OMC_INSTALL_FILE_PREFIX}-testsuite-trace.txt
 #cat tmpTime.log >> ${OMC_INSTALL_FILE_PREFIX}-testsuite-trace.txt
 #rm -f tmpTime.log
 
@@ -270,13 +272,12 @@ ssh  -i $HOME/.ssh/id_rsa -o UserKnownHostsFile=$HOME/.ssh/known_hosts ${SSHUSER
 #commands to run on remote host
 cd public_html/omc/builds/windows/nightly-builds/${PR_BUILD}${OM_ENCRYPT}${PLATFORM}/
 pwd
-pwd
-echo "ln -s OpenModelica-${REVISION}-${PLATFORM}.exe OpenModelica-latest.exe"
-ln -s OpenModelica-${REVISION}-${PLATFORM}.exe OpenModelica-latest.exe
+echo "ln -s ${OMC_FILE_PREFIX}.exe OpenModelica-latest.exe"
+ln -s ${OMC_FILE_PREFIX}.exe OpenModelica-latest.exe
 ls -lah
 echo "md5sum OpenModelica-latest.exe | cut -f 1 -d ' ' > OpenModelica-latest.exe.md5sum"
 md5sum OpenModelica-latest.exe | cut -f 1 -d ' ' > OpenModelica-latest.exe.md5sum
-cp OpenModelica-latest.exe.md5sum OpenModelica-${REVISION}-${PLATFORM}.exe.md5sum
+cp OpenModelica-latest.exe.md5sum ${OMC_FILE_PREFIX}.exe.md5sum
 cat OpenModelica-latest.exe.md5sum
 ls -lah
 ENDSSH
