@@ -1,4 +1,4 @@
-REM @echo off 
+REM @echo off
 REM @echo off & setlocal enableextensions
 REM Task to automatically build the Windows nigthly-build for OpenModelica
 REM Adrian.Pop@liu.se
@@ -21,17 +21,11 @@ if not exist "c:\dev\" (
   md c:\dev\
 )
 
-if not exist "c:\dev\OMTLMSimulator\" (
-  echo Checkout c:\dev\OMTLMSimulator
-  cd c:\dev\
-  git clone https://github.com/OpenModelica/OMTLMSimulator.git OMTLMSimulator
-)
-
 if not exist "c:\dev\OpenModelica_releases" (
  echo Creating c:\dev\OpenModelica_releases
  md c:\dev\OpenModelica_releases
 )
-  
+
 if not exist "c:\dev\OM32bit\" (
   echo Checkout c:\dev\OM32bit
   cd c:\dev\

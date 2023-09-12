@@ -38,7 +38,7 @@ if [ "${PLATFORM}" = "32bit" ]; then
 fi
 
 SIGNTOOL=`find /c/Program\ Files\ \(x86\)/Windows\ Kits/10/ -wholename "*${XPREFIX}/signtool.exe" | tail -1`
-if [ "${SIGNTOOL}" = "" ]; then 
+if [ "${SIGNTOOL}" = "" ]; then
  echo "Could not find signtool.exe"
  exit 1
 fi
@@ -178,11 +178,9 @@ git clone https://github.com/PySimulator/PySimulator -q -b master /c/dev/${OM_EN
 #unzip jEdit4.5_VisualFigaro.zip
 #rm jEdit4.5_VisualFigaro.zip
 
-# OMSimulator and OMTLMSimulator
+# OMSimulator
 cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}/
 make -f Makefile.omdev.mingw omsimulator
-cd OMSimulator
-make OMTLMSimulatorStandalone
 
 # build the installer
 cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}/OMSetup
@@ -214,7 +212,7 @@ echo "  http://test.openmodelica.org/~marsj/MSL32/BuildModelRecursive.html" >> $
 echo " " >> ${OMC_INSTALL_FILE_PREFIX}-README.txt
 cat >> ${OMC_INSTALL_FILE_PREFIX}-README.txt <<DELIMITER
 *Instructions to prepare test information if you find a bug:*
- 
+
 generate a .mos script file loading all libraries and files your model need call simulate.
 // start .mos script
 loadModel(Modelica);
@@ -232,10 +230,10 @@ where your .mos script is:
 c:\> z:
 z:\> cd \path\to\script(.mos)\file\
 z:\path\to\script(.mos)\file\> \path\to\OpenModelica\bin\omc.exe
-+d=dumpdaelow,optdaedump,bltdump,dumpindxdae,backenddaeinfo 
++d=dumpdaelow,optdaedump,bltdump,dumpindxdae,backenddaeinfo
 YourScriptFile.mos > log.txt 2>&1
 
-Either send the log.txt file alongwith your bug 
+Either send the log.txt file alongwith your bug
 description to OpenModelica@ida.liu.se or file a
 bug in our bug tracker:
   https://trac.openmodelica.org/OpenModelica

@@ -58,7 +58,7 @@ BrandingText "Copyright $2 OpenModelica"  ; The $2 variable is filled in the Fun
 !undef SHCNF_FLUSH
 !endif
 !define SHCNF_FLUSH        0x1000
- 
+
 !macro UPDATEFILEASSOC
 ; Using the system.dll plugin to call the SHChangeNotify Win32 API function so we
 ; can update the shell.
@@ -206,13 +206,6 @@ Section "OpenModelica Core" Section1
       /x "osgVolume" /x "osgWidget" /x "clang-cl.exe" /x "clang-check.exe" /x "llvm-lto2.exe" /x "doc" \
       "$%OMDEV%\tools\msys\*"
 !endif
-  # create OMTLMSimulator directory
-  SetOutPath "\\?\$INSTDIR\OMTLMSimulator\bin"
-  File /r "..\OMSimulator\OMTLMSimulator\bin\*"
-  SetOutPath "\\?\$INSTDIR\OMTLMSimulator\Documentation"
-  File /oname=OMTLMSimulator.pdf "..\OMSimulator\OMTLMSimulator\Documentation\TLMPlugin.pdf"
-  SetOutPath "\\?\$INSTDIR\OMTLMSimulator\CompositeModels"
-  File /r "..\OMSimulator\OMTLMSimulator\CompositeModels\*"
   # Create share directory and copy files in it
   SetOutPath "\\?\$INSTDIR\share"
   File /r /x "*.svn" /x "*.git" "..\build\share\*"
@@ -343,7 +336,7 @@ Section "Uninstall"
   Delete $INSTDIR\Uninstall.exe
   # delete the shortcuts and the start menu folder
   !insertmacro MUI_STARTMENU_GETFOLDER Application $R1
-  # delete the shortcuts and the start menu folder  
+  # delete the shortcuts and the start menu folder
   Delete "$SMPROGRAMS\$R1\OpenModelica Connection Editor.lnk"
   Delete "$SMPROGRAMS\$R1\OpenModelica Notebook.lnk"
   Delete "$SMPROGRAMS\$R1\OpenModelica Optimization Editor.lnk"
@@ -412,7 +405,7 @@ NotInstalled:
     ${AndIf} ${PLATFORMVERSION} == "64"
       ; disable registry redirection (enable access to 64-bit portion of registry)
       SetRegView 64
-      ; change install dir 
+      ; change install dir
       StrCpy $INSTDIR "$PROGRAMFILES64\$(^Name)"
     ${EndIf}
   ${EndIf}
