@@ -156,13 +156,6 @@ Section "OpenModelica Core" Section1
   # Create lib\python directory and copy files in it
   SetOutPath "\\?\$INSTDIR\lib\python"
   File /r /x "*.svn" /x "*.git" "..\build\lib\python\*"
-  # Copy the OMSimulator libs
-  SetOutPath "\\?\$INSTDIR\lib"
-  File "..\build\lib\libOMSimulator.a"
-  File "..\build\lib\libOMSimulatorLua.a"
-  # Copy the OMSimulator py files
-  SetOutPath "\\?\$INSTDIR\lib\OMSimulator"
-  File /r "..\build\lib\OMSimulator\*"
   # Create tools directory and copy files in it
   SetOutPath "\\?\$INSTDIR\tools"
   # copy the setup file / readme
