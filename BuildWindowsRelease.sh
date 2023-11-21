@@ -261,14 +261,14 @@ cd ${OMC_INSTALL_PREFIX}
 # move the last nightly build to the older location
 ssh -i $HOME/.ssh/id_rsa -o UserKnownHostsFile=$HOME/.ssh/known_hosts ${SSHUSER}@build.openmodelica.org <<ENDSSH
 #commands to run on remote host
-cd public_html/omc/builds/windows/nightly-builds/${PR_BUILD}${OM_ENCRYPT}${PLATFORM}/
+cd /var/www/build.openmodelica.org/omc/builds/windows/nightly-builds/${PR_BUILD}${OM_ENCRYPT}${PLATFORM}/
 #rm -f older/*.* || true
 mv -f OpenModelica* older/ || true
 ENDSSH
-scp  -i $HOME/.ssh/id_rsa -o UserKnownHostsFile=$HOME/.ssh/known_hosts OpenModelica*${PLATFORM}* ${SSHUSER}@build.openmodelica.org:public_html/omc/builds/windows/nightly-builds/${PR_BUILD}${OM_ENCRYPT}${PLATFORM}/
+scp  -i $HOME/.ssh/id_rsa -o UserKnownHostsFile=$HOME/.ssh/known_hosts OpenModelica*${PLATFORM}* ${SSHUSER}@build.openmodelica.org:/var/www/build.openmodelica.org/omc/builds/windows/nightly-builds/${PR_BUILD}${OM_ENCRYPT}${PLATFORM}/
 ssh  -i $HOME/.ssh/id_rsa -o UserKnownHostsFile=$HOME/.ssh/known_hosts ${SSHUSER}@build.openmodelica.org <<ENDSSH
 #commands to run on remote host
-cd public_html/omc/builds/windows/nightly-builds/${PR_BUILD}${OM_ENCRYPT}${PLATFORM}/
+cd /var/www/build.openmodelica.org/omc/builds/windows/nightly-builds/${PR_BUILD}${OM_ENCRYPT}${PLATFORM}/
 pwd
 echo "ln -s ${OMC_FILE_PREFIX}.exe OpenModelica-latest.exe"
 ln -s ${OMC_FILE_PREFIX}.exe OpenModelica-latest.exe
