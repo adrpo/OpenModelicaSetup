@@ -3,6 +3,10 @@
 
 Unicode true
 
+!ifndef MSYSRUNTIME
+  !error "Argument MSYSRUNTIME is not set. Call with argument /MSYSRUNTIME=mingw32|mingw64|ucrt64"
+!endif
+
 !ifndef PLATFORMVERSION
   !error "Argument PLATFORMVERSION is not set. Call with argument /DPLATFORMVERSION=32 or /DPLATFORMVERSION=64"
 !endif
@@ -127,10 +131,10 @@ Section "OpenModelica Core" Section1
   File "bin\64bit\ssleay32.dll"
 !endif
   # Copy the qt plugins
-  File /r /x "*.svn" "$%OMDEV%\tools\msys\mingw${PLATFORMVERSION}\share\qt5\plugins\*"
+  File /r /x "*.svn" "$%OMDEV%\tools\msys\${MSYSRUNTIME}${PLATFORMVERSION}\share\qt5\plugins\*"
   # Create the bin\osgPlugins-3.6.5 directory
   SetOutPath "\\?\$INSTDIR\bin\osgPlugins-3.6.5"
-  File /r /x "*.svn" "$%OMDEV%\tools\msys\mingw${PLATFORMVERSION}\bin\osgPlugins-3.6.5\*"
+  File /r /x "*.svn" "$%OMDEV%\tools\msys\${MSYSRUNTIME}${PLATFORMVERSION}\bin\osgPlugins-3.6.5\*"
   # Create bin\ffi directory and copy files in it
   SetOutPath "\\?\$INSTDIR\bin\ffi"
   File "..\build\bin\ffi\*"
@@ -163,7 +167,7 @@ Section "OpenModelica Core" Section1
   # Create msys directory and copy files in it
   SetOutPath "\\?\$INSTDIR\tools\msys"
 !if ${PLATFORMVERSION} == "32"
-  File /r /x "mingw64" /x "group" /x "passwd" /x "pacman.log" /x "tmp\*.*" /x "*.pyc" /x "libQt5*.*" \
+  File /r /x "mingw64" /x "ucrt64" /x "clang64" /x "group" /x "passwd" /x "pacman.log" /x "tmp\*.*" /x "*.pyc" /x "libQt5*.*" \
       /x "moc.exe" /x "qt*.qch" /x "Qt5*.dll" /x "libwx*.*" /x "libgtk*.*" /x "qtcreator" /x "rcc.exe" \
       /x "testcon.exe" /x "libsicu*.*" /x "libicu*.*" /x "wx*.dll" /x "libosg*.*" /x "Adwaita" /x "OpenSceneGraph" /x "gtk-doc" \
       /x "poppler" /x "man" /x "libdbus.*" /x "tcl*.*" /x "avcodec*.*" /x "windeployqt.exe" /x "python3.5" /x "mingw_osg*.*" \
@@ -180,8 +184,9 @@ Section "OpenModelica Core" Section1
       /x "osgQt" /x "osgShadow" /x "osgSim" /x "osgTerrain" /x "osgText" /x "osgUI" /x "osgUtil" /x "osgViewer" \
       /x "osgVolume" /x "osgWidget" /x "clang-cl.exe" /x "clang-check.exe" /x "llvm-lto2.exe" /x "doc" \
       "$%OMDEV%\tools\msys\*"
-!else
-  File /r /x "mingw32" /x "group" /x "passwd" /x "pacman.log" /x "tmp\*.*" /x "*.pyc" /x "libQt5*.*" \
+!else #64 bit
+!if ${MSYSTEM} == "ucrt"
+  File /r /x "mingw32" /x "mingw64" /x "clang64" /x "clang32" /x "group" /x "passwd" /x "pacman.log" /x "tmp\*.*" /x "*.pyc" /x "libQt5*.*" \
       /x "moc.exe" /x "qt*.qch" /x "Qt5*.dll" /x "libwx*.*" /x "libgtk*.*" /x "qtcreator" /x "rcc.exe" \
       /x "testcon.exe" /x "libsicu*.*" /x "libicu*.*" /x "wx*.dll" /x "libosg*.*" /x "Adwaita" /x "OpenSceneGraph" /x "gtk-doc" \
       /x "poppler" /x "man" /x "libdbus.*" /x "tcl*.*" /x "avcodec*.*" /x "windeployqt.exe" /x "python3.5" /x "mingw_osg*.*" \
@@ -198,6 +203,25 @@ Section "OpenModelica Core" Section1
       /x "osgQt" /x "osgShadow" /x "osgSim" /x "osgTerrain" /x "osgText" /x "osgUI" /x "osgUtil" /x "osgViewer" \
       /x "osgVolume" /x "osgWidget" /x "clang-cl.exe" /x "clang-check.exe" /x "llvm-lto2.exe" /x "doc" \
       "$%OMDEV%\tools\msys\*"
+!else # mingw64
+  File /r /x "mingw32" /x "ucrt64" /x "clang64" /x "clang32" /x "group" /x "passwd" /x "pacman.log" /x "tmp\*.*" /x "*.pyc" /x "libQt5*.*" \
+      /x "moc.exe" /x "qt*.qch" /x "Qt5*.dll" /x "libwx*.*" /x "libgtk*.*" /x "qtcreator" /x "rcc.exe" \
+      /x "testcon.exe" /x "libsicu*.*" /x "libicu*.*" /x "wx*.dll" /x "libosg*.*" /x "Adwaita" /x "OpenSceneGraph" /x "gtk-doc" \
+      /x "poppler" /x "man" /x "libdbus.*" /x "tcl*.*" /x "avcodec*.*" /x "windeployqt.exe" /x "python3.5" /x "mingw_osg*.*" \
+      /x "ActiveQt" /x "Qt3DCore" /x "Qt3DInput" /x "Qt3DLogic" /x "Qt3DQuick" /x "Qt3DQuickInput" \
+      /x "Qt3DQuickRender" /x "Qt3DRender" /x "QtBluetooth" /x "QtCLucene" /x "QtConcurrent" /x "QtCore" \
+      /x "QtDBus" /x "QtDesigner" /x "QtDesignerComponents" /x "QtGui" /x "QtHelp" /x "QtLabsControls" \
+      /x "QtLabsTemplates" /x "QtLocation" /x "QtMultimedia" /x "QtMultimediaQuick_p" /x "QtMultimediaWidgets" \
+      /x "QtNetwork" /x "QtNfc" /x "QtOpenGL" /x "QtOpenGLExtensions" /x "QtPlatformHeaders" /x "QtPlatformSupport" \
+      /x "QtPositioning" /x "QtPrintSupport" /x "QtQml" /x "QtQmlDevTools" /x "QtQuick" /x "QtQuickParticles" \
+      /x "QtQuickTest" /x "QtQuickWidgets" /x "QtScript" /x "QtScriptTools" /x "QtSensors" /x "QtSerialBus" \
+      /x "QtSerialPort" /x "QtSql" /x "QtSvg" /x "QtTest" /x "QtUiPlugin" /x "QtUiTools" /x "QtWebChannel" \
+      /x "QtWebKit" /x "QtWebKitWidgets" /x "QtWebSockets" /x "QtWidgets" /x "QtWinExtras" /x "QtXml" /x "QtXmlPatterns" \
+      /x "osg" /x "osgAnimation" /x "osgDB" /x "osgFX" /x "osgGA" /x "osgManipulator" /x "osgParticle" /x "osgPresentation" \
+      /x "osgQt" /x "osgShadow" /x "osgSim" /x "osgTerrain" /x "osgText" /x "osgUI" /x "osgUtil" /x "osgViewer" \
+      /x "osgVolume" /x "osgWidget" /x "clang-cl.exe" /x "clang-check.exe" /x "llvm-lto2.exe" /x "doc" \
+      "$%OMDEV%\tools\msys\*
+!endif
 !endif
   # Create share directory and copy files in it
   SetOutPath "\\?\$INSTDIR\share"
@@ -257,9 +281,11 @@ Section -post SEC0001
 !if ${PLATFORMVERSION} == "32"
   Rename "$INSTDIR\tools\msys\mingw32\bin\libeay32.dll" "$INSTDIR\tools\msys\mingw32\bin\libeay32-O.dll"
   Rename "$INSTDIR\tools\msys\mingw32\bin\ssleay32.dll" "$INSTDIR\tools\msys\mingw32\bin\ssleay32-O.dll"
-!else
+!else # mingw64 or ucrt64
+!if ${MSYSTEM} == "mingw"
   Rename "$INSTDIR\tools\msys\mingw64\bin\libeay32.dll" "$INSTDIR\tools\msys\mingw64\bin\libeay32-O.dll"
   Rename "$INSTDIR\tools\msys\mingw64\bin\ssleay32.dll" "$INSTDIR\tools\msys\mingw64\bin\ssleay32-O.dll"
+!endif
 !endif
   # do post installation actions
   WriteRegStr SHCTX "${REGKEY}" Path $INSTDIR
