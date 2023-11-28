@@ -60,20 +60,25 @@ set +e
 # make sure we use the windows temp directory and not the msys/tmp one!
 
 # !!!!! make sure we don't do rm -f /* 
-if [ -z "${TMP}" ]; then
+if [ ! -z "${TMP}" ]; then
  rm -rf ${TMP}/*
 fi
-if [ -z "${TEMP}" ]; then
+if [ ! -z "${TEMP}" ]; then
  rm -rf ${TEMP}/*
 fi
-export TMP=$tmp TEMP=$temp
-if [ -z "${TMP}" ]; then
+# of course msys2 changed the way one accesses the windows %TMP% and %TEMP% in sh
+if [ ! -z "${ORIGINAL_TMP}" ]; then
+export TMP=$ORIGINAL_TMP
+fi
+if [ ! -z "${ORIGINAL_TEMP}" ]; then
+export TEMP=$ORIGINAL_TEMP
+fi
+if [ ! -z "${TMP}" ]; then
  rm -rf ${TMP}/*
 fi
-if [ -z "${TEMP}" ]; then
+if [ ! -z "${TEMP}" ]; then
  rm -rf ${TEMP}/*
 fi
-
 
 # set the OPENMODELICAHOME and OPENMODELICALIBRARY
 export OPENMODELICAHOME="c:/dev/${OM_ENCRYPT}OM${PLATFORM}/build"
