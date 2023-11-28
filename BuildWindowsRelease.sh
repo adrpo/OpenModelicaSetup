@@ -37,6 +37,18 @@ if [ "${PLATFORM}" = "32bit" ]; then
 	XPREFIX="x86"
 fi
 
+MSYSRUNTIME=""
+if [ "${MSYSTEM}" = "UCRT64" ]; then
+	MSYSRUNTIME="ucrt"
+fi
+if [ "${MSYSTEM}" = "MINGW64" ]; then
+	MSYSRUNTIME="mingw"
+fi
+if [ "${MSYSTEM}" = "MINGW32" ]; then
+	MSYSRUNTIME="mingw"
+fi
+
+
 SIGNTOOL=`find /c/Program\ Files\ \(x86\)/Windows\ Kits/10/ -wholename "*${XPREFIX}/signtool.exe" | tail -1`
 if [ "${SIGNTOOL}" = "" ]; then
  echo "Could not find signtool.exe"
@@ -135,21 +147,16 @@ echo "Building OpenModelica and OpenModelica libraries"
 # make sure we break on error!
 set -e
 make -f 'Makefile.omdev.mingw' ${MAKETHREADS} ${OM_ENCRYPT_FLAGS} omc omc-diff omlibrary qtclients
+echo "Building CPP runtime"
+make -f 'Makefile.omdev.mingw' ${MAKETHREADS} BUILDTYPE=Release runtimeCPPinstall
+echo "Copying OMSens"
+make -f 'Makefile.omdev.mingw' ${MAKETHREADS} omsens
 cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}
 echo "Installing Python scripting"
 rm -rf OMPython
 git clone https://github.com/OpenModelica/OMPython -q -b master /c/dev/${OM_ENCRYPT}OM${PLATFORM}/OMPython
 # build OMPython
 make -k -f 'Makefile.omdev.mingw' ${MAKETHREADS} install-python
-cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}
-echo "Building MSVC compiled runtime"
-make -f 'Makefile.omdev.mingw' ${MAKETHREADS} BUILDTYPE=Release VSVERSION=2015 simulationruntimecmsvc
-echo "Building MSVC CPP runtime"
-make -f 'Makefile.omdev.mingw' ${MAKETHREADS} BUILDTYPE=Release VSVERSION=2015 runtimeCPPmsvcinstall
-echo "Building CPP runtime"
-make -f 'Makefile.omdev.mingw' ${MAKETHREADS} BUILDTYPE=Release runtimeCPPinstall
-echo "Copying OMSens"
-make -f 'Makefile.omdev.mingw' ${MAKETHREADS} omsens
 
 echo "OMJava scripting"
 cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}
@@ -185,7 +192,7 @@ make -f Makefile.omdev.mingw omsimulator
 # build the installer
 cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}/OMSetup
 rm -rf 	OMLibraries.nsh
-if ! makensis //DPLATFORMVERSION="${PLATFORM::-3}" //DOMVERSION="${REVISION_SHORT}" //DPRODUCTVERSION=${PRODUCT_VERSION} OpenModelicaSetup.nsi > trace.txt 2>&1 ; then
+if ! makensis //MSYSRUNTIME="${MSYSRUNTIME}" //DPLATFORMVERSION="${PLATFORM::-3}" //DOMVERSION="${REVISION_SHORT}" //DPRODUCTVERSION=${PRODUCT_VERSION} OpenModelicaSetup.nsi > trace.txt 2>&1 ; then
   cat trace.txt
   exit 1
 fi
