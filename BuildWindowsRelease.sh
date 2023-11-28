@@ -58,11 +58,22 @@ fi
 # don't exit on error
 set +e
 # make sure we use the windows temp directory and not the msys/tmp one!
-rm -rf ${TMP}/*
-rm -rf ${TEMP}/*
+
+# !!!!! make sure we don't do rm -f /* 
+if [ -z "${TMP}" ]; then
+ rm -rf ${TMP}/*
+fi
+if [ -z "${TEMP}" ]; then
+ rm -rf ${TEMP}/*
+fi
 export TMP=$tmp TEMP=$temp
-rm -rf ${TMP}/*
-rm -rf ${TEMP}/*
+if [ -z "${TMP}" ]; then
+ rm -rf ${TMP}/*
+fi
+if [ -z "${TEMP}" ]; then
+ rm -rf ${TEMP}/*
+fi
+
 
 # set the OPENMODELICAHOME and OPENMODELICALIBRARY
 export OPENMODELICAHOME="c:/dev/${OM_ENCRYPT}OM${PLATFORM}/build"
