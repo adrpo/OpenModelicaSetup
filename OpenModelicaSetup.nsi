@@ -220,7 +220,7 @@ Section "OpenModelica Core" Section1
       /x "osg" /x "osgAnimation" /x "osgDB" /x "osgFX" /x "osgGA" /x "osgManipulator" /x "osgParticle" /x "osgPresentation" \
       /x "osgQt" /x "osgShadow" /x "osgSim" /x "osgTerrain" /x "osgText" /x "osgUI" /x "osgUtil" /x "osgViewer" \
       /x "osgVolume" /x "osgWidget" /x "clang-cl.exe" /x "clang-check.exe" /x "llvm-lto2.exe" /x "doc" \
-      "$%OMDEV%\tools\msys\*
+      "$%OMDEV%\tools\msys\*"
 !endif
 !endif
   # Create share directory and copy files in it
