@@ -84,8 +84,8 @@ fi
 export OPENMODELICAHOME="c:/dev/${OM_ENCRYPT}OM${PLATFORM}/build"
 export OPENMODELICALIBRARY="c:/dev/${OM_ENCRYPT}OM${PLATFORM}/build/lib/omlibrary"
 
-OMDEVWIN=${OMDEV}
-OMDEVMYS=`cygpath -u ${OMDEV}`
+export OMDEVWIN=${OMDEV}
+export OMDEVMYS=`cygpath -u ${OMDEV}`
 
 # have OMDEV in Msys version
 export OMDEV=${OMDEVMSYS}
@@ -211,6 +211,7 @@ make -f Makefile.omdev.mingw omsimulator
 # build the installer
 cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}/OMSetup
 rm -rf 	OMLibraries.nsh
+# make sure we have it in Windows version for the NSIS
 export OMDEV=${OMDEVWIN}
 if ! makensis //DMSYSRUNTIME="${MSYSRUNTIME}" //DPLATFORMVERSION="${PLATFORM::-3}" //DOMVERSION="${REVISION_SHORT}" //DPRODUCTVERSION=${PRODUCT_VERSION} OpenModelicaSetup.nsi > trace.txt 2>&1 ; then
   cat trace.txt
