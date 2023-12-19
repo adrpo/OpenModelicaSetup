@@ -85,7 +85,7 @@ export OPENMODELICAHOME="c:/dev/${OM_ENCRYPT}OM${PLATFORM}/build"
 export OPENMODELICALIBRARY="c:/dev/${OM_ENCRYPT}OM${PLATFORM}/build/lib/omlibrary"
 
 export OMDEVWIN=${OMDEV}
-export OMDEVMYS=`cygpath -u ${OMDEV}`
+export OMDEVMSYS=`cygpath -u ${OMDEV}`
 
 # have OMDEV in Msys version
 export OMDEV=${OMDEVMSYS}
