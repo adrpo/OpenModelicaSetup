@@ -171,8 +171,8 @@ cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}
 echo "Installing Python scripting"
 rm -rf OMPython
 git clone https://github.com/OpenModelica/OMPython -q -b master /c/dev/${OM_ENCRYPT}OM${PLATFORM}/OMPython
-# build OMPython
-make -k -f 'Makefile.omdev.mingw' ${MAKETHREADS} install-python
+# build OMPython, don't fail for now until we can fix the UCRT build
+make -k -f 'Makefile.omdev.mingw' ${MAKETHREADS} install-python || true
 
 echo "OMJava scripting"
 cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}
