@@ -185,7 +185,7 @@ Section "OpenModelica Core" Section1
       /x "osgVolume" /x "osgWidget" /x "clang-cl.exe" /x "clang-check.exe" /x "llvm-lto2.exe" /x "doc" \
       "$%OMDEV%\tools\msys\*"
 !else #64 bit
-!if ${MSYSTEM} == "ucrt"
+!if ${MSYSRUNTIME} == "ucrt"
   File /r /x "mingw32" /x "mingw64" /x "clang64" /x "clang32" /x "group" /x "passwd" /x "pacman.log" /x "tmp\*.*" /x "*.pyc" /x "libQt5*.*" \
       /x "moc.exe" /x "qt*.qch" /x "Qt5*.dll" /x "libwx*.*" /x "libgtk*.*" /x "qtcreator" /x "rcc.exe" \
       /x "testcon.exe" /x "libsicu*.*" /x "libicu*.*" /x "wx*.dll" /x "libosg*.*" /x "Adwaita" /x "OpenSceneGraph" /x "gtk-doc" \
@@ -282,7 +282,7 @@ Section -post SEC0001
   Rename "$INSTDIR\tools\msys\mingw32\bin\libeay32.dll" "$INSTDIR\tools\msys\mingw32\bin\libeay32-O.dll"
   Rename "$INSTDIR\tools\msys\mingw32\bin\ssleay32.dll" "$INSTDIR\tools\msys\mingw32\bin\ssleay32-O.dll"
 !else # mingw64 or ucrt64
-!if ${MSYSTEM} == "mingw"
+!if ${MSYSRUNTIME} == "mingw"
   Rename "$INSTDIR\tools\msys\mingw64\bin\libeay32.dll" "$INSTDIR\tools\msys\mingw64\bin\libeay32-O.dll"
   Rename "$INSTDIR\tools\msys\mingw64\bin\ssleay32.dll" "$INSTDIR\tools\msys\mingw64\bin\ssleay32-O.dll"
 !endif
