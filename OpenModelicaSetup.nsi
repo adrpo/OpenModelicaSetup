@@ -274,8 +274,8 @@ SectionEnd
 
 Section -post SEC0001
   # generate group and passwd files for this machine!
-  Exec '"$INSTDIR\tools\msys\usr\bin\mkpasswd.exe" -l -c > $INSTDIR\tools\msys\etc\passwd'
-  Exec '"$INSTDIR\tools\msys\usr\bin\mkgroup.exe" -l -c > $INSTDIR\tools\msys\etc\group'
+  Exec '"$INSTDIR\tools\msys\usr\bin\mkpasswd.exe" -l -c > "$INSTDIR\tools\msys\etc\passwd"'
+  Exec '"$INSTDIR\tools\msys\usr\bin\mkgroup.exe" -l -c > "$INSTDIR\tools\msys\etc\group"'
   # Rename libeay32.dll and ssleay32.dll as they seem to have issues on some newer Windows versions
   # https://trac.openmodelica.org/OpenModelica/ticket/5909 https://www.openmodelica.org/forum/default-topic/2944-installation-problems
 !if ${PLATFORMVERSION} == "32"
