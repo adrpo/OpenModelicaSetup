@@ -293,11 +293,11 @@ cd ${OMC_INSTALL_PREFIX}
 FILE_PATH=/var/www/build.openmodelica.org/omc/builds/windows/nightly-builds/${PR_BUILD}${OM_ENCRYPT}${PLATFORM}/${OMC_INSTALL_FILE_PREFIX}.exe
 
 # check if already on the server
-if [ ssh -i $HOME/.ssh/id_rsa -o UserKnownHostsFile=$HOME/.ssh/known_hosts -q ${SSHUSER}@build.openmodelica.org [[ -f $FILE_PATH ]] ]; then 
 
-echo "Seems we already have the file on the server"
+SHOULD_COPY=false
+ssh -i $HOME/.ssh/id_rsa -o UserKnownHostsFile=$HOME/.ssh/known_hosts -q ${SSHUSER}@build.openmodelica.org [[ -f $FILE_PATH ]] && SHOULD_COPY=false || SHOULD_COPY=true
 
-else
+if [ "${SHOULD_COPY}" = true ]; then
 
 # move the last nightly build to the older location
 ssh -i $HOME/.ssh/id_rsa -o UserKnownHostsFile=$HOME/.ssh/known_hosts ${SSHUSER}@build.openmodelica.org <<ENDSSH
@@ -321,6 +321,6 @@ cat OpenModelica-latest.exe.md5sum
 ls -lah
 ENDSSH
 
-fi # if [ ssh -i $HOME/.ssh/id_rsa -o UserKnownHostsFile=$HOME/.ssh/known_hosts -q ${SSHUSER}@build.openmodelica.org [[ -f $FILE_PATH ]] ]; then 
+fi # if [ "${SHOULD_COPY}" = true ]; then
 
 echo "All done!"
