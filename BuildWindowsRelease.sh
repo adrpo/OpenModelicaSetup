@@ -290,7 +290,7 @@ ls -lah ${OMC_INSTALL_PREFIX}
 
 cd ${OMC_INSTALL_PREFIX}
 
-FILE_PATH=/var/www/build.openmodelica.org/omc/builds/windows/nightly-builds/${PR_BUILD}${OM_ENCRYPT}${PLATFORM}/${OMC_INSTALL_FILE_PREFIX}.exe
+FILE_PATH=/var/www/build.openmodelica.org/omc/builds/windows/nightly-builds/${PR_BUILD}${OM_ENCRYPT}${PLATFORM}/${OMC_FILE_PREFIX}.exe
 
 # check if already on the server
 
