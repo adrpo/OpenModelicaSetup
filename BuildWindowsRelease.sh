@@ -133,9 +133,10 @@ export OMC_INSTALL_FILE_PREFIX="${OMC_INSTALL_PREFIX}${OMC_FILE_PREFIX}"
 
 # test if exists and exit if it does
 if [ -f "${OMC_INSTALL_FILE_PREFIX}.exe" ]; then
-	echo "Revision ${OMC_INSTALL_FILE_PREFIX}.exe already exists! Exiting ..."
-	exit 0
-fi
+
+echo "Revision ${OMC_INSTALL_FILE_PREFIX}.exe already exists! Check the server ..."
+
+else
 
 # clean
 rm -rf /c/dev/OpenModelica_releases/${OM_ENCRYPT}/v*
@@ -283,9 +284,19 @@ echo "  https://test.openmodelica.org/jenkins/job/OM_Win/lastBuild/console" >> $
 #cat tmpTime.log >> ${OMC_INSTALL_FILE_PREFIX}-testsuite-trace.txt
 #rm -f tmpTime.log
 
+fi # end checking for if [ -f "${OMC_INSTALL_FILE_PREFIX}.exe" ]; then
+
 ls -lah ${OMC_INSTALL_PREFIX}
 
 cd ${OMC_INSTALL_PREFIX}
+
+FILE_PATH=/var/www/build.openmodelica.org/omc/builds/windows/nightly-builds/${PR_BUILD}${OM_ENCRYPT}${PLATFORM}/${OMC_INSTALL_FILE_PREFIX}.exe
+
+# check if already on the server
+if [ ssh -i $HOME/.ssh/id_rsa -o UserKnownHostsFile=$HOME/.ssh/known_hosts -q ${SSHUSER}@build.openmodelica.org [[ -f $FILE_PATH ]] ]; then 
+
+else 
+
 # move the last nightly build to the older location
 ssh -i $HOME/.ssh/id_rsa -o UserKnownHostsFile=$HOME/.ssh/known_hosts ${SSHUSER}@build.openmodelica.org <<ENDSSH
 #commands to run on remote host
@@ -307,4 +318,7 @@ cp OpenModelica-latest.exe.md5sum ${OMC_FILE_PREFIX}.exe.md5sum
 cat OpenModelica-latest.exe.md5sum
 ls -lah
 ENDSSH
+
+fi # if [ ssh -i $HOME/.ssh/id_rsa -o UserKnownHostsFile=$HOME/.ssh/known_hosts -q ${SSHUSER}@build.openmodelica.org [[ -f $FILE_PATH ]] ]; then 
+
 echo "All done!"
