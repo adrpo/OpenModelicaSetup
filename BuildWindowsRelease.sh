@@ -295,7 +295,9 @@ FILE_PATH=/var/www/build.openmodelica.org/omc/builds/windows/nightly-builds/${PR
 # check if already on the server
 if [ ssh -i $HOME/.ssh/id_rsa -o UserKnownHostsFile=$HOME/.ssh/known_hosts -q ${SSHUSER}@build.openmodelica.org [[ -f $FILE_PATH ]] ]; then 
 
-else 
+echo "Seems we already have the file on the server"
+
+else
 
 # move the last nightly build to the older location
 ssh -i $HOME/.ssh/id_rsa -o UserKnownHostsFile=$HOME/.ssh/known_hosts ${SSHUSER}@build.openmodelica.org <<ENDSSH
