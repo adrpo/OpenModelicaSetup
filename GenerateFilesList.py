@@ -81,6 +81,8 @@ if __name__ == "__main__":
   # Copy the qt plugins
   OMDEV = os.environ['OMDEV']
   OMDEV = OMDEV.replace('/', '\\')
+  # Create the bin\plugins directory
+  f.write('${SetOutPath} "\\\\?\\$INSTDIR\\bin\plugins"' + '\n')
   base_directory = OMDEV + "\\tools\msys\\" + args.MSYSRUNTIME + args.PLATFORMVERSION + "\share\qt5\plugins"
   files_dirs_to_exclude = [r"\*.svn"]
   list_files(base_directory, files_dirs_to_exclude, f, True)
