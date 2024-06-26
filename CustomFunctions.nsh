@@ -70,7 +70,7 @@ Function CheckForSpaces
   Exch $R0
 FunctionEnd
 
-# takes the string and a divider. Splits the string based on the divider. 
+# takes the string and a divider. Splits the string based on the divider.
 Function GetLastPart
   Exch $R0 ; input
   Exch
@@ -79,7 +79,7 @@ Function GetLastPart
   Push $R3
   Push $R4
   Push $R5
-   
+
   StrCpy $R2 -1
   StrLen $R4 $R0
   StrLen $R5 $R1
@@ -111,12 +111,12 @@ Function HardDiskDrives
   StrCpy $R0 $9
   StrCpy $R1 $8
   StrCpy $0 StopGetDrives
- 
+
   Push $0
 FunctionEnd
 
 Function GetLocalTime
- 
+
   # Prepare variables
   Push $0
   Push $1
@@ -125,13 +125,13 @@ Function GetLocalTime
   Push $4
   Push $5
   Push $6
- 
+
   # Call GetLocalTime API from Kernel32.dll
   System::Call '*(&i2, &i2, &i2, &i2, &i2, &i2, &i2, &i2) i .r0'
   System::Call 'kernel32::GetLocalTime(i) i(r0)'
   System::Call '*$0(&i2, &i2, &i2, &i2, &i2, &i2, &i2, &i2)i \
   (.r4, .r5, .r3, .r6, .r2, .r1, .r0,)'
- 
+
   # Day of week: convert to name
   StrCmp $3 0 0 +3
     StrCpy $3 Sunday
@@ -154,15 +154,15 @@ Function GetLocalTime
   StrCmp $3 6 0 +2
     StrCpy $3 Saturday
   WeekNameEnd:
- 
+
   # Minute: convert to 2 digits format
     IntCmp $1 9 0 0 +2
       StrCpy $1 '0$1'
- 
+
   # Second: convert to 2 digits format
     IntCmp $0 9 0 0 +2
       StrCpy $0 '0$0'
- 
+
   # Return to user
   Exch $6
   Exch
@@ -183,11 +183,11 @@ Function GetLocalTime
   Exch 6
   Exch $0
   Exch 6
- 
+
 FunctionEnd
 
 Function un.GetLocalTime
- 
+
   # Prepare variables
   Push $0
   Push $1
@@ -196,13 +196,13 @@ Function un.GetLocalTime
   Push $4
   Push $5
   Push $6
- 
+
   # Call GetLocalTime API from Kernel32.dll
   System::Call '*(&i2, &i2, &i2, &i2, &i2, &i2, &i2, &i2) i .r0'
   System::Call 'kernel32::GetLocalTime(i) i(r0)'
   System::Call '*$0(&i2, &i2, &i2, &i2, &i2, &i2, &i2, &i2)i \
   (.r4, .r5, .r3, .r6, .r2, .r1, .r0,)'
- 
+
   # Day of week: convert to name
   StrCmp $3 0 0 +3
     StrCpy $3 Sunday
@@ -225,15 +225,15 @@ Function un.GetLocalTime
   StrCmp $3 6 0 +2
     StrCpy $3 Saturday
   WeekNameEnd:
- 
+
   # Minute: convert to 2 digits format
     IntCmp $1 9 0 0 +2
       StrCpy $1 '0$1'
- 
+
   # Second: convert to 2 digits format
     IntCmp $0 9 0 0 +2
       StrCpy $0 '0$0'
- 
+
   # Return to user
   Exch $6
   Exch
@@ -254,5 +254,35 @@ Function un.GetLocalTime
   Exch 6
   Exch $0
   Exch 6
- 
+
+FunctionEnd
+
+Function un.StrStrip
+  Exch $R0 #string
+  Exch
+  Exch $R1 #in string
+  Push $R2
+  Push $R3
+  Push $R4
+  Push $R5
+  StrLen $R5 $R0
+  StrCpy $R2 -1
+  IntOp $R2 $R2 + 1
+  StrCpy $R3 $R1 $R5 $R2
+  StrCmp $R3 "" +9
+  StrCmp $R3 $R0 0 -3
+    StrCpy $R3 $R1 $R2
+    IntOp $R2 $R2 + $R5
+    StrCpy $R4 $R1 "" $R2
+    StrCpy $R1 $R3$R4
+    IntOp $R2 $R2 - $R5
+    IntOp $R2 $R2 - 1
+    Goto -10
+    StrCpy $R0 $R1
+  Pop $R5
+  Pop $R4
+  Pop $R3
+  Pop $R2
+  Pop $R1
+  Exch $R0
 FunctionEnd

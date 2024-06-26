@@ -4,7 +4,7 @@
 Unicode true
 
 !ifndef MSYSRUNTIME
-  !error "Argument MSYSRUNTIME is not set. Call with argument /MSYSRUNTIME=mingw32|mingw64|ucrt64"
+  !error "Argument MSYSRUNTIME is not set. Call with argument /MSYSRUNTIME=mingw|ucrt"
 !endif
 
 !ifndef PLATFORMVERSION
@@ -77,6 +77,7 @@ BrandingText "Copyright $2 OpenModelica"  ; The $2 variable is filled in the Fun
 !include "winmessages.nsh"
 !include "FileAssociation.nsh"
 !include "CustomFunctions.nsh"
+!include "UninstallLog.nsh"
 
 ; HKLM (all users) vs HKCU (current user) defines
 !define ENV_HKLM 'HKLM "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"'
@@ -112,131 +113,81 @@ VIAddVersionKey FileDescription ""
 VIAddVersionKey LegalCopyright ""
 ShowUninstDetails hide
 
+;--------------------------------
+; Configure UnInstall log to only remove what is installed
+;--------------------------------
+;Set the name of the uninstall log
+!define UninstLog "uninstall.log"
+Var UninstLog
+
+!define UNINSTALL_PATH "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\OpenModelica"
+
+;Uninstall log file missing.
+LangString UninstLogMissing ${LANG_ENGLISH} "${UninstLog} not found!$\r$\nUninstallation cannot proceed!"
+
+;AddItem macro
+!define AddItem "!insertmacro AddItem"
+
+;BackupFile macro
+!define BackupFile "!insertmacro BackupFile"
+
+;BackupFiles macro
+!define BackupFiles "!insertmacro BackupFiles"
+
+;Copy files macro
+!define CopyFiles "!insertmacro CopyFiles"
+
+;CreateDirectory macro
+!define CreateDirectory "!insertmacro CreateDirectory"
+
+;CreateShortcut macro
+!define CreateShortcut "!insertmacro CreateShortcut"
+
+;File macro
+!define File "!insertmacro File"
+
+;Rename macro
+!define Rename "!insertmacro Rename"
+
+;RestoreFile macro
+!define RestoreFile "!insertmacro RestoreFile"
+
+;RestoreFiles macro
+!define RestoreFiles "!insertmacro RestoreFiles"
+
+;SetOutPath macro
+!define SetOutPath "!insertmacro SetOutPath"
+
+;WriteRegDWORD macro
+!define WriteRegDWORD "!insertmacro WriteRegDWORD"
+
+;WriteRegStr macro
+!define WriteRegStr "!insertmacro WriteRegStr"
+
+;WriteUninstaller macro
+!define WriteUninstaller "!insertmacro WriteUninstaller"
+
+Section -openlogfile
+  CreateDirectory "$INSTDIR"
+  IfFileExists "$INSTDIR\${UninstLog}" +3
+    FileOpen $UninstLog "$INSTDIR\${UninstLog}" w
+  Goto +4
+    SetFileAttributes "$INSTDIR\${UninstLog}" NORMAL
+    FileOpen $UninstLog "$INSTDIR\${UninstLog}" a
+    FileSeek $UninstLog 0 END
+SectionEnd
+
 # Installer sections
 Section "OpenModelica Core" Section1
   SectionIn RO
   SetOverwrite on
-  # Create bin directory and copy files in it
-  SetOutPath "\\?\$INSTDIR\bin"
-  File "..\build\bin\*"
-  File "..\OSMC-License.txt"
-  # Copy the openssl binaries
-!if ${PLATFORMVERSION} == "32"
-  File "bin\32bit\libeay32.dll"
-  File "bin\32bit\libssl32.dll"
-  File "bin\32bit\ssleay32.dll"
-!else
-  File "bin\64bit\libeay32.dll"
-  File "bin\64bit\libssl-1_1-x64.dll"
-  File "bin\64bit\ssleay32.dll"
-!endif
-  # Copy the qt plugins
-  File /r /x "*.svn" "$%OMDEV%\tools\msys\${MSYSRUNTIME}${PLATFORMVERSION}\share\qt5\plugins\*"
-  # Create the bin\osgPlugins-3.6.5 directory
-  SetOutPath "\\?\$INSTDIR\bin\osgPlugins-3.6.5"
-  File /r /x "*.svn" "$%OMDEV%\tools\msys\${MSYSRUNTIME}${PLATFORMVERSION}\bin\osgPlugins-3.6.5\*"
-  # Create bin\ffi directory and copy files in it
-  SetOutPath "\\?\$INSTDIR\bin\ffi"
-  File "..\build\bin\ffi\*"
-!if /FILEEXISTS "..\build\bin\omc-semla\*.*"
-  # Create bin\omc-semla directory and copy files in it
-  SetOutPath "\\?\$INSTDIR\bin\omc-semla"
-  File /r "..\build\bin\omc-semla\*"
-!endif
-  # Create icons directory and copy files in it
-  SetOutPath "\\?\$INSTDIR\icons"
-  File /r /x "*.svn" "icons\*"
-  File "..\OMEdit\OMEditLIB\Resources\icons\omedit.ico"
-  File "..\OMOptim\OMOptim\GUI\Resources\omoptim.ico"
-  File "..\OMPlot\OMPlot\OMPlotGUI\Resources\icons\omplot.ico"
-  File "..\OMShell\OMShell\OMShellGUI\Resources\omshell.ico"
-  File "..\OMNotebook\OMNotebook\OMNotebookGUI\Resources\OMNotebook_icon.ico"
-  # Create include\omc directory and copy files in it
-  SetOutPath "\\?\$INSTDIR\include\omc"
-  File /r /x "*.svn" "..\build\include\omc\*"
-  # Create lib\omc directory and copy files in it
-  SetOutPath "\\?\$INSTDIR\lib\omc"
-  File /r /x "*.svn" /x "*.git" "..\build\lib\omc\*"
-  # Create lib\python directory and copy files in it
-  SetOutPath "\\?\$INSTDIR\lib\python"
-  File /r /x "*.svn" /x "*.git" "..\build\lib\python\*"
-  # Create tools directory and copy files in it
-  SetOutPath "\\?\$INSTDIR\tools"
-  # copy the setup file / readme
-  File "$%OMDEV%\tools\MSYS_SETUP*"
-  # Create msys directory and copy files in it
-  SetOutPath "\\?\$INSTDIR\tools\msys"
-!if ${PLATFORMVERSION} == "32"
-  File /r /x "mingw64" /x "ucrt64" /x "clang64" /x "group" /x "passwd" /x "pacman.log" /x "tmp\*.*" /x "*.pyc" /x "libQt5*.*" \
-      /x "moc.exe" /x "qt*.qch" /x "Qt5*.dll" /x "libwx*.*" /x "libgtk*.*" /x "qtcreator" /x "rcc.exe" \
-      /x "testcon.exe" /x "libsicu*.*" /x "libicu*.*" /x "wx*.dll" /x "libosg*.*" /x "Adwaita" /x "OpenSceneGraph" /x "gtk-doc" \
-      /x "poppler" /x "man" /x "libdbus.*" /x "tcl*.*" /x "avcodec*.*" /x "windeployqt.exe" /x "python3.5" /x "mingw_osg*.*" \
-      /x "ActiveQt" /x "Qt3DCore" /x "Qt3DInput" /x "Qt3DLogic" /x "Qt3DQuick" /x "Qt3DQuickInput" \
-      /x "Qt3DQuickRender" /x "Qt3DRender" /x "QtBluetooth" /x "QtCLucene" /x "QtConcurrent" /x "QtCore" \
-      /x "QtDBus" /x "QtDesigner" /x "QtDesignerComponents" /x "QtGui" /x "QtHelp" /x "QtLabsControls" \
-      /x "QtLabsTemplates" /x "QtLocation" /x "QtMultimedia" /x "QtMultimediaQuick_p" /x "QtMultimediaWidgets" \
-      /x "QtNetwork" /x "QtNfc" /x "QtOpenGL" /x "QtOpenGLExtensions" /x "QtPlatformHeaders" /x "QtPlatformSupport" \
-      /x "QtPositioning" /x "QtPrintSupport" /x "QtQml" /x "QtQmlDevTools" /x "QtQuick" /x "QtQuickParticles" \
-      /x "QtQuickTest" /x "QtQuickWidgets" /x "QtScript" /x "QtScriptTools" /x "QtSensors" /x "QtSerialBus" \
-      /x "QtSerialPort" /x "QtSql" /x "QtSvg" /x "QtTest" /x "QtUiPlugin" /x "QtUiTools" /x "QtWebChannel" \
-      /x "QtWebKit" /x "QtWebKitWidgets" /x "QtWebSockets" /x "QtWidgets" /x "QtWinExtras" /x "QtXml" /x "QtXmlPatterns" \
-      /x "osg" /x "osgAnimation" /x "osgDB" /x "osgFX" /x "osgGA" /x "osgManipulator" /x "osgParticle" /x "osgPresentation" \
-      /x "osgQt" /x "osgShadow" /x "osgSim" /x "osgTerrain" /x "osgText" /x "osgUI" /x "osgUtil" /x "osgViewer" \
-      /x "osgVolume" /x "osgWidget" /x "clang-cl.exe" /x "clang-check.exe" /x "llvm-lto2.exe" /x "doc" \
-      "$%OMDEV%\tools\msys\*"
-!else #64 bit
-!if ${MSYSRUNTIME} == "ucrt"
-  File /r /x "mingw32" /x "mingw64" /x "clang64" /x "clang32" /x "group" /x "passwd" /x "pacman.log" /x "tmp\*.*" /x "*.pyc" /x "libQt5*.*" \
-      /x "moc.exe" /x "qt*.qch" /x "Qt5*.dll" /x "libwx*.*" /x "libgtk*.*" /x "qtcreator" /x "rcc.exe" \
-      /x "testcon.exe" /x "libsicu*.*" /x "libicu*.*" /x "wx*.dll" /x "libosg*.*" /x "Adwaita" /x "OpenSceneGraph" /x "gtk-doc" \
-      /x "poppler" /x "man" /x "libdbus.*" /x "tcl*.*" /x "avcodec*.*" /x "windeployqt.exe" /x "python3.5" /x "mingw_osg*.*" \
-      /x "ActiveQt" /x "Qt3DCore" /x "Qt3DInput" /x "Qt3DLogic" /x "Qt3DQuick" /x "Qt3DQuickInput" \
-      /x "Qt3DQuickRender" /x "Qt3DRender" /x "QtBluetooth" /x "QtCLucene" /x "QtConcurrent" /x "QtCore" \
-      /x "QtDBus" /x "QtDesigner" /x "QtDesignerComponents" /x "QtGui" /x "QtHelp" /x "QtLabsControls" \
-      /x "QtLabsTemplates" /x "QtLocation" /x "QtMultimedia" /x "QtMultimediaQuick_p" /x "QtMultimediaWidgets" \
-      /x "QtNetwork" /x "QtNfc" /x "QtOpenGL" /x "QtOpenGLExtensions" /x "QtPlatformHeaders" /x "QtPlatformSupport" \
-      /x "QtPositioning" /x "QtPrintSupport" /x "QtQml" /x "QtQmlDevTools" /x "QtQuick" /x "QtQuickParticles" \
-      /x "QtQuickTest" /x "QtQuickWidgets" /x "QtScript" /x "QtScriptTools" /x "QtSensors" /x "QtSerialBus" \
-      /x "QtSerialPort" /x "QtSql" /x "QtSvg" /x "QtTest" /x "QtUiPlugin" /x "QtUiTools" /x "QtWebChannel" \
-      /x "QtWebKit" /x "QtWebKitWidgets" /x "QtWebSockets" /x "QtWidgets" /x "QtWinExtras" /x "QtXml" /x "QtXmlPatterns" \
-      /x "osg" /x "osgAnimation" /x "osgDB" /x "osgFX" /x "osgGA" /x "osgManipulator" /x "osgParticle" /x "osgPresentation" \
-      /x "osgQt" /x "osgShadow" /x "osgSim" /x "osgTerrain" /x "osgText" /x "osgUI" /x "osgUtil" /x "osgViewer" \
-      /x "osgVolume" /x "osgWidget" /x "clang-cl.exe" /x "clang-check.exe" /x "llvm-lto2.exe" /x "doc" \
-      "$%OMDEV%\tools\msys\*"
-!else # mingw64
-  File /r /x "mingw32" /x "ucrt64" /x "clang64" /x "clang32" /x "group" /x "passwd" /x "pacman.log" /x "tmp\*.*" /x "*.pyc" /x "libQt5*.*" \
-      /x "moc.exe" /x "qt*.qch" /x "Qt5*.dll" /x "libwx*.*" /x "libgtk*.*" /x "qtcreator" /x "rcc.exe" \
-      /x "testcon.exe" /x "libsicu*.*" /x "libicu*.*" /x "wx*.dll" /x "libosg*.*" /x "Adwaita" /x "OpenSceneGraph" /x "gtk-doc" \
-      /x "poppler" /x "man" /x "libdbus.*" /x "tcl*.*" /x "avcodec*.*" /x "windeployqt.exe" /x "python3.5" /x "mingw_osg*.*" \
-      /x "ActiveQt" /x "Qt3DCore" /x "Qt3DInput" /x "Qt3DLogic" /x "Qt3DQuick" /x "Qt3DQuickInput" \
-      /x "Qt3DQuickRender" /x "Qt3DRender" /x "QtBluetooth" /x "QtCLucene" /x "QtConcurrent" /x "QtCore" \
-      /x "QtDBus" /x "QtDesigner" /x "QtDesignerComponents" /x "QtGui" /x "QtHelp" /x "QtLabsControls" \
-      /x "QtLabsTemplates" /x "QtLocation" /x "QtMultimedia" /x "QtMultimediaQuick_p" /x "QtMultimediaWidgets" \
-      /x "QtNetwork" /x "QtNfc" /x "QtOpenGL" /x "QtOpenGLExtensions" /x "QtPlatformHeaders" /x "QtPlatformSupport" \
-      /x "QtPositioning" /x "QtPrintSupport" /x "QtQml" /x "QtQmlDevTools" /x "QtQuick" /x "QtQuickParticles" \
-      /x "QtQuickTest" /x "QtQuickWidgets" /x "QtScript" /x "QtScriptTools" /x "QtSensors" /x "QtSerialBus" \
-      /x "QtSerialPort" /x "QtSql" /x "QtSvg" /x "QtTest" /x "QtUiPlugin" /x "QtUiTools" /x "QtWebChannel" \
-      /x "QtWebKit" /x "QtWebKitWidgets" /x "QtWebSockets" /x "QtWidgets" /x "QtWinExtras" /x "QtXml" /x "QtXmlPatterns" \
-      /x "osg" /x "osgAnimation" /x "osgDB" /x "osgFX" /x "osgGA" /x "osgManipulator" /x "osgParticle" /x "osgPresentation" \
-      /x "osgQt" /x "osgShadow" /x "osgSim" /x "osgTerrain" /x "osgText" /x "osgUI" /x "osgUtil" /x "osgViewer" \
-      /x "osgVolume" /x "osgWidget" /x "clang-cl.exe" /x "clang-check.exe" /x "llvm-lto2.exe" /x "doc" \
-      "$%OMDEV%\tools\msys\*"
-!endif
-!endif
-  # Create share directory and copy files in it
-  SetOutPath "\\?\$INSTDIR\share"
-  File /r /x "*.svn" /x "*.git" "..\build\share\*"
-  # Copy the OpenModelica web page & users guide url shortcut
-  SetOutPath "\\?\$INSTDIR\share\doc\omc"
-  File "..\doc\OpenModelica Project Online.url"
-  File "..\doc\OpenModelicaUsersGuide.url"
-  # Copy OMSens directory
-  SetOutPath "\\?\$INSTDIR\share\OMSens"
-  File /r /x ".git*" "..\build\share\OMSens\*"
+  # Create file FilesList.nsh by calling python script GenerateFilesList.py
+  !include "FilesList.nsh"
 SectionEnd
 
 Section -Main SEC0000
-    # create the file with InstallMode
+  # create the file with InstallMode
+  ${AddItem} "$INSTDIR\InstallMode.txt"
   FileOpen $4 "$INSTDIR\InstallMode.txt" w
   FileWrite $4 $MultiUser.InstallMode
   FileClose $4
@@ -279,64 +230,64 @@ Section -post SEC0001
   # Rename libeay32.dll and ssleay32.dll as they seem to have issues on some newer Windows versions
   # https://trac.openmodelica.org/OpenModelica/ticket/5909 https://www.openmodelica.org/forum/default-topic/2944-installation-problems
 !if ${PLATFORMVERSION} == "32"
-  Rename "$INSTDIR\tools\msys\mingw32\bin\libeay32.dll" "$INSTDIR\tools\msys\mingw32\bin\libeay32-O.dll"
-  Rename "$INSTDIR\tools\msys\mingw32\bin\ssleay32.dll" "$INSTDIR\tools\msys\mingw32\bin\ssleay32-O.dll"
+  ${Rename} "$INSTDIR\tools\msys\mingw32\bin\libeay32.dll" "$INSTDIR\tools\msys\mingw32\bin\libeay32-O.dll"
+  ${Rename} "$INSTDIR\tools\msys\mingw32\bin\ssleay32.dll" "$INSTDIR\tools\msys\mingw32\bin\ssleay32-O.dll"
 !else # mingw64 or ucrt64
 !if ${MSYSRUNTIME} == "mingw"
-  Rename "$INSTDIR\tools\msys\mingw64\bin\libeay32.dll" "$INSTDIR\tools\msys\mingw64\bin\libeay32-O.dll"
-  Rename "$INSTDIR\tools\msys\mingw64\bin\ssleay32.dll" "$INSTDIR\tools\msys\mingw64\bin\ssleay32-O.dll"
+  ${Rename} "$INSTDIR\tools\msys\mingw64\bin\libeay32.dll" "$INSTDIR\tools\msys\mingw64\bin\libeay32-O.dll"
+  ${Rename} "$INSTDIR\tools\msys\mingw64\bin\ssleay32.dll" "$INSTDIR\tools\msys\mingw64\bin\ssleay32-O.dll"
 !endif
 !endif
   # do post installation actions
-  WriteRegStr SHCTX "${REGKEY}" Path $INSTDIR
-  WriteUninstaller $INSTDIR\Uninstall.exe
+  ${WriteRegStr} SHCTX "${REGKEY}" Path $INSTDIR
+  ${WriteUninstaller} $INSTDIR\Uninstall.exe
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
   # set the output path to temp directory which is used as a start in option for shortcuts.
   SetOutPath "\\?\$TEMP"
   # create shortcuts
-  CreateDirectory "$SMPROGRAMS\$StartMenuGroup"
-  CreateShortCut "$SMPROGRAMS\$StartMenuGroup\OpenModelica Connection Editor.lnk" "$INSTDIR\bin\OMEdit.exe" \
-  "" "$INSTDIR\icons\omedit.ico"
-  CreateShortCut "$SMPROGRAMS\$StartMenuGroup\OpenModelica Notebook.lnk" "$INSTDIR\bin\OMNotebook.exe" \
-  "" "$INSTDIR\icons\OMNotebook_icon.ico"
-  CreateShortCut "$SMPROGRAMS\$StartMenuGroup\OpenModelica Optimization Editor.lnk" "$INSTDIR\bin\OMOptim.exe" \
-  "" "$INSTDIR\icons\omoptim.ico"
-  CreateShortCut "$SMPROGRAMS\$StartMenuGroup\OpenModelica Shell.lnk" "$INSTDIR\bin\OMShell.exe" \
-  "" "$INSTDIR\icons\omshell.ico"
-  CreateShortCut "$SMPROGRAMS\$StartMenuGroup\OpenModelica Website.lnk" "$INSTDIR\share\doc\omc\OpenModelica Project Online.url" \
-  "" "$INSTDIR\icons\IExplorer.ico"
-  SetOutPath "\\?\$INSTDIR\"
-  CreateShortCut "$SMPROGRAMS\$StartMenuGroup\Uninstall OpenModelica.lnk" "$INSTDIR\Uninstall.exe" \
-  "" "$INSTDIR\icons\OpenModelica.ico"
-  CreateDirectory "$SMPROGRAMS\$StartMenuGroup\Documentation"
+  ${CreateDirectory} "$SMPROGRAMS\$StartMenuGroup"
+  ${CreateShortcut} "$SMPROGRAMS\$StartMenuGroup\OpenModelica Connection Editor.lnk" "$INSTDIR\bin\OMEdit.exe" \
+  "" "$INSTDIR\icons\omedit.ico" ""
+  ${CreateShortcut} "$SMPROGRAMS\$StartMenuGroup\OpenModelica Notebook.lnk" "$INSTDIR\bin\OMNotebook.exe" \
+  "" "$INSTDIR\icons\OMNotebook_icon.ico" ""
+  ${CreateShortcut} "$SMPROGRAMS\$StartMenuGroup\OpenModelica Optimization Editor.lnk" "$INSTDIR\bin\OMOptim.exe" \
+  "" "$INSTDIR\icons\omoptim.ico" ""
+  ${CreateShortcut} "$SMPROGRAMS\$StartMenuGroup\OpenModelica Shell.lnk" "$INSTDIR\bin\OMShell.exe" \
+  "" "$INSTDIR\icons\omshell.ico" ""
+  ${CreateShortcut} "$SMPROGRAMS\$StartMenuGroup\OpenModelica Website.lnk" "$INSTDIR\share\doc\omc\OpenModelica Project Online.url" \
+  "" "$INSTDIR\icons\IExplorer.ico" ""
+  ${SetOutPath} "\\?\$INSTDIR\"
+  ${CreateShortcut} "$SMPROGRAMS\$StartMenuGroup\Uninstall OpenModelica.lnk" "$INSTDIR\Uninstall.exe" \
+  "" "$INSTDIR\icons\OpenModelica.ico" ""
+  ${CreateDirectory} "$SMPROGRAMS\$StartMenuGroup\Documentation"
   SetOutPath ""
-  CreateShortCut "$SMPROGRAMS\$StartMenuGroup\Documentation\OpenModelica - Users Guide.lnk" "$INSTDIR\share\doc\omc\OpenModelicaUsersGuide.url" \
-  "" "$INSTDIR\icons\IExplorer.ico"
-  CreateShortCut "$SMPROGRAMS\$StartMenuGroup\Documentation\OpenModelica - Users Guide.pdf.lnk" "$INSTDIR\share\doc\omc\OpenModelicaUsersGuide-latest.pdf" \
-  "" "$INSTDIR\icons\PDF.ico"
-  CreateShortCut "$SMPROGRAMS\$StartMenuGroup\Documentation\OpenModelica - MetaProgramming Guide.pdf.lnk" "$INSTDIR\share\doc\omc\SystemDocumentation\OpenModelicaMetaProgramming.pdf" \
-  "" "$INSTDIR\icons\PDF.ico"
-  CreateShortCut "$SMPROGRAMS\$StartMenuGroup\Documentation\OpenModelica - Modelica Tutorial by Peter Fritzson.pdf.lnk" "$INSTDIR\share\doc\omc\ModelicaTutorialFritzson.pdf" \
-  "" "$INSTDIR\icons\PDF.ico"
-  CreateShortCut "$SMPROGRAMS\$StartMenuGroup\Documentation\OpenModelica - System Guide.pdf.lnk" "$INSTDIR\share\doc\omc\SystemDocumentation\OpenModelicaSystem.pdf" \
-  "" "$INSTDIR\icons\PDF.ico"
-  CreateDirectory "$SMPROGRAMS\$StartMenuGroup\PySimulator"
+  ${CreateShortcut} "$SMPROGRAMS\$StartMenuGroup\Documentation\OpenModelica - Users Guide.lnk" "$INSTDIR\share\doc\omc\OpenModelicaUsersGuide.url" \
+  "" "$INSTDIR\icons\IExplorer.ico" ""
+  ${CreateShortcut} "$SMPROGRAMS\$StartMenuGroup\Documentation\OpenModelica - Users Guide.pdf.lnk" "$INSTDIR\share\doc\omc\OpenModelicaUsersGuide-latest.pdf" \
+  "" "$INSTDIR\icons\PDF.ico" ""
+  ${CreateShortcut} "$SMPROGRAMS\$StartMenuGroup\Documentation\OpenModelica - MetaProgramming Guide.pdf.lnk" "$INSTDIR\share\doc\omc\SystemDocumentation\OpenModelicaMetaProgramming.pdf" \
+  "" "$INSTDIR\icons\PDF.ico" ""
+  ${CreateShortcut} "$SMPROGRAMS\$StartMenuGroup\Documentation\OpenModelica - Modelica Tutorial by Peter Fritzson.pdf.lnk" "$INSTDIR\share\doc\omc\ModelicaTutorialFritzson.pdf" \
+  "" "$INSTDIR\icons\PDF.ico" ""
+  ${CreateShortcut} "$SMPROGRAMS\$StartMenuGroup\Documentation\OpenModelica - System Guide.pdf.lnk" "$INSTDIR\share\doc\omc\SystemDocumentation\OpenModelicaSystem.pdf" \
+  "" "$INSTDIR\icons\PDF.ico" ""
+  ${CreateDirectory} "$SMPROGRAMS\$StartMenuGroup\PySimulator"
   SetOutPath ""
-  CreateShortCut "$SMPROGRAMS\$StartMenuGroup\PySimulator\README.lnk" "$INSTDIR\share\omc\scripts\PythonInterface\PySimulator\README.md"
+  ${CreateShortcut} "$SMPROGRAMS\$StartMenuGroup\PySimulator\README.lnk" "$INSTDIR\share\omc\scripts\PythonInterface\PySimulator\README.md" "" "" ""
   !insertmacro MUI_STARTMENU_WRITE_END
   ${registerExtension} "$INSTDIR\bin\OMEdit.exe" ".mo" "OpenModelica Connection Editor"
   ${registerExtension} "$INSTDIR\bin\OMNotebook.exe" ".onb" "OpenModelica Notebook"
   # make sure windows knows about the change
   !insertmacro UPDATEFILEASSOC
-  WriteRegStr SHCTX "SOFTWARE\OpenModelica" InstallMode $MultiUser.InstallMode
-  WriteRegStr SHCTX "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\OpenModelica" DisplayName "$(^Name)"
-  WriteRegStr SHCTX "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\OpenModelica" DisplayVersion "${VERSION}"
-  WriteRegStr SHCTX "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\OpenModelica" Publisher "${COMPANY}"
-  WriteRegStr SHCTX "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\OpenModelica" URLInfoAbout "${URL}"
-  WriteRegStr SHCTX "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\OpenModelica" DisplayIcon $INSTDIR\Uninstall.exe
-  WriteRegStr SHCTX "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\OpenModelica" UninstallString $INSTDIR\Uninstall.exe
-  WriteRegDWORD SHCTX "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\OpenModelica" NoModify 1
-  WriteRegDWORD SHCTX "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\OpenModelica" NoRepair 1
+  ${WriteRegStr} SHCTX ${REGKEY} InstallMode $MultiUser.InstallMode
+  ${WriteRegStr} SHCTX ${UNINSTALL_PATH} DisplayName "$(^Name)"
+  ${WriteRegStr} SHCTX ${UNINSTALL_PATH} DisplayVersion "${VERSION}"
+  ${WriteRegStr} SHCTX ${UNINSTALL_PATH} Publisher "${COMPANY}"
+  ${WriteRegStr} SHCTX ${UNINSTALL_PATH} URLInfoAbout "${URL}"
+  ${WriteRegStr} SHCTX ${UNINSTALL_PATH} DisplayIcon $INSTDIR\Uninstall.exe
+  ${WriteRegStr} SHCTX ${UNINSTALL_PATH} UninstallString $INSTDIR\Uninstall.exe
+  ${WriteRegDWORD} SHCTX ${UNINSTALL_PATH} NoModify 1
+  ${WriteRegDWORD} SHCTX ${UNINSTALL_PATH} NoRepair 1
 SectionEnd
 
 # Uninstaller sections
@@ -351,35 +302,63 @@ Section "Uninstall"
     Goto +3
     DeleteRegValue ${ENV_HKCU} OPENMODELICAHOME
     SetShellVarContext current
-  DeleteRegKey SHCTX "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\OpenModelica"
-  Delete $INSTDIR\Uninstall.exe
-  # delete the shortcuts and the start menu folder
-  !insertmacro MUI_STARTMENU_GETFOLDER Application $R1
-  # delete the shortcuts and the start menu folder
-  Delete "$SMPROGRAMS\$R1\OpenModelica Connection Editor.lnk"
-  Delete "$SMPROGRAMS\$R1\OpenModelica Notebook.lnk"
-  Delete "$SMPROGRAMS\$R1\OpenModelica Optimization Editor.lnk"
-  Delete "$SMPROGRAMS\$R1\OpenModelica Shell.lnk"
-  Delete "$SMPROGRAMS\$R1\OpenModelica Website.lnk"
-  Delete "$SMPROGRAMS\$R1\Uninstall OpenModelica.lnk"
-  Delete "$SMPROGRAMS\$R1\Documentation\OpenModelica - API - HowTo.pdf.lnk"
-  Delete "$SMPROGRAMS\$R1\Documentation\OpenModelica - MetaProgramming Guide.pdf.lnk"
-  Delete "$SMPROGRAMS\$R1\Documentation\OpenModelica - Modelica Tutorial by Peter Fritzson.pdf.lnk"
-  Delete "$SMPROGRAMS\$R1\Documentation\OpenModelica - System Guide.pdf.lnk"
-  Delete "$SMPROGRAMS\$R1\Documentation\OpenModelica - Users Guide.lnk"
-  Delete "$SMPROGRAMS\$R1\Documentation\OpenModelica - Users Guide.pdf.lnk"
-  RMDir "$SMPROGRAMS\$R1\Documentation"
-  Delete "$SMPROGRAMS\$R1\PySimulator\README.lnk"
-  RMDir "$SMPROGRAMS\$R1\PySimulator"
-  RMDir "$SMPROGRAMS\$R1"
+  ;Can't uninstall if uninstall log is missing!
+  IfFileExists "$INSTDIR\${UninstLog}" +3
+    MessageBox MB_OK|MB_ICONSTOP "$(UninstLogMissing)"
+      Abort
+
+  Push $R0
+  Push $R1
+  Push $R2
+  SetFileAttributes "$INSTDIR\${UninstLog}" NORMAL
+  FileOpen $UninstLog "$INSTDIR\${UninstLog}" r
+  StrCpy $R1 -1
+
+  GetLineCount:
+    ClearErrors
+    FileRead $UninstLog $R0
+    IntOp $R1 $R1 + 1
+    StrCpy $R0 $R0 -2
+    Push $R0
+    IfErrors 0 GetLineCount
+
+  Pop $R0
+
+  LoopRead:
+    StrCmp $R1 0 LoopDone
+    Pop $R0
+
+    Push $R0
+    Push "\\?\"
+    Call un.StrStrip
+    Pop $R0
+
+    IfFileExists "$R0\*.*" 0 +3
+      RMDir $R0  #is dir
+    Goto +9
+    IfFileExists $R0 0 +3
+      Delete $R0 #is file
+    Goto +6
+    StrCmp $R0 "SHCTX ${REGKEY}" 0 +3
+      DeleteRegKey SHCTX "${REGKEY}" #is Reg Element
+    Goto +3
+    StrCmp $R0 "SHCTX ${UNINSTALL_PATH}" 0 +2
+      DeleteRegKey SHCTX "${UNINSTALL_PATH}" #is Reg Element
+
+    IntOp $R1 $R1 - 1
+    Goto LoopRead
+  LoopDone:
+  FileClose $UninstLog
+  Delete "$INSTDIR\${UninstLog}"
+  RMDir "$INSTDIR"
+  Pop $R2
+  Pop $R1
+  Pop $R0
+
   ${unregisterExtension} ".mo" "OpenModelica Connection Editor"
   ${unregisterExtension} ".onb" "OpenModelica Notebook"
-  # make sure windows knows about the change
+  # make sure windows knows about the change of file associations
   !insertmacro UPDATEFILEASSOC
-  DeleteRegValue SHCTX "${REGKEY}" StartMenuGroup
-  DeleteRegValue SHCTX "${REGKEY}" Path
-  DeleteRegKey SHCTX "${REGKEY}"
-  RmDir /r $INSTDIR
   # make sure windows knows about the change i.e we deleted the environment variables.
   SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
 SectionEnd
@@ -392,7 +371,7 @@ Function .onInit
   Pop $1  ; Month
   Pop $2  ; Year
   ; Check to see if already installed
-  ReadRegStr $R2 SHCTX "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\OpenModelica" "UninstallString"
+  ReadRegStr $R2 SHCTX ${UNINSTALL_PATH} "UninstallString"
   IfFileExists $R2 +1 NotInstalled
     IfSilent uninst ; if silent install mode is enabled then also uninstall silently.
       MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION \
@@ -410,7 +389,6 @@ uninst:
     ExecWait "$R2 /S _?=$R0" ; _? switch blocks until the uninstall is done.
     Goto +2
   ExecWait "$R2 _?=$R0" ; _? switch blocks until the uninstall is done.
-  RmDir /r $INSTDIR ; since we are running the Uninstall.exe so it was not deleted in the uninstallation process. Makesure we remove the $INSTDIR.
 NotInstalled:
   InitPluginsDir
   !insertmacro MULTIUSER_INIT
