@@ -143,28 +143,30 @@ if __name__ == "__main__":
   f.write('${SetOutPath} "\\\\?\\$INSTDIR\\tools\msys"' + '\n')
   base_directory = OMDEV + "\\tools\msys"
   files_dirs_to_exclude = [r"group", r"passwd", r"pacman.log", r"tmp\.*\.*", r".*\.pyc", r"libQt5.*\.*", r"libQt6.*\.*"
-                           , r"moc.exe", r"qt.*\.qch", r"Qt5.*\.*", r"qt5.*\.*", r"Qt6.*\.*", r"qt6.*\.*", r"libwx.*\.*", r"libgtk.*\.*", r"qtcreator", r"rcc.exe"
-                           , r"testcon.exe", r"libsicu.*\.*", r"libicu.*\.*", r"wx.*\.dll", r"libosg.*\.*", r"Adwaita", r"OpenSceneGraph", r"gtk-doc"
-                           , r"poppler", r"man", r"libdbus.*", r"tcl.*\.*", r"avcodec.*\.*", r"windeployqt.exe", r"python3.5", r"mingw_osg.*\.*"
-                           , r"ActiveQt", r"Qt3DCore", r"Qt3DInput", r"Qt3DLogic", r"Qt3DQuick", r"Qt3DQuickInput"
-                           , r"Qt3DQuickRender", r"Qt3DRender", r"QtBluetooth", r"QtCLucene", r"QtConcurrent", r"QtCore"
-                           , r"QtDBus", r"QtDesigner", r"QtDesignerComponents", r"QtGui", r"QtHelp", r"QtLabsControls"
-                           , r"QtLabsTemplates", r"QtLocation", r"QtMultimedia", r"QtMultimediaQuick_p", r"QtMultimediaWidgets"
-                           , r"QtNetwork", r"QtNfc", r"QtOpenGL", r"QtOpenGLExtensions", r"QtPlatformHeaders", r"QtPlatformSupport"
-                           , r"QtPositioning", r"QtPrintSupport", r"QtQml", r"QtQmlDevTools", r"QtQuick", r"QtQuickParticles"
-                           , r"QtQuickTest", r"QtQuickWidgets", r"QtScript", r"QtScriptTools", r"QtSensors", r"QtSerialBus"
-                           , r"QtSerialPort", r"QtSql", r"QtSvg", r"QtTest", r"QtUiPlugin", r"QtUiTools", r"QtWebChannel"
-                           , r"QtWebKit", r"QtWebKitWidgets", r"QtWebSockets", r"QtWidgets", r"QtWinExtras", r"QtXml", r"QtXmlPatterns"
-                           , r"osg", r"osgAnimation", r"osgDB", r"osgFX", r"osgGA", r"osgManipulator", r"osgParticle", r"osgPresentation"
-                           , r"osgQt", r"osgShadow", r"osgSim", r"osgTerrain", r"osgText", r"osgUI", r"osgUtil", r"osgViewer"
-                           , r"osgVolume", r"osgWidget", r"clang-cl.exe", r"clang-check.exe", r"llvm-lto2.exe", r"doc", r".gitignore"]
+                           , r"moc.exe", r"qt.*\.qch", r"Qt5.*\.*", r"qt5.*\.*", r"Qt6.*\.*", r"qt6.*\.*", r"libwx.*\.*", r"libgtk.*\.*", r"\\bqtcreator\\b"
+                           , r"rcc.exe", r"testcon.exe", r"libsicu.*\.*", r"libicu.*\.*", r"wx.*\.dll", r"libosg.*\.*", r"\\bAdwaita\\b"
+                           , r"\\bOpenSceneGraph\\b", r"\\bgtk-doc\\b" , r"\\bpoppler\\b", r"\\bman\\b", r"libdbus.*", r"tcl.*\.*", r"avcodec.*\.*"
+                           , r"windeployqt.exe", r"\\bpython3.5\\b", r"mingw_osg.*\.*" , r"\\bActiveQt\\b", r"\\bQt3DCore\\b", r"\\bQt3DInput\\b"
+                           , r"\\bQt3DLogic\\b", r"\\bQt3DQuick\\b", r"\\bQt3DQuickInput\\b" , r"\\bQt3DQuickRender\\b", r"\\bQt3DRender\\b"
+                           , r"\\bQtBluetooth\\b", r"\\bQtCLucene\\b", r"\\bQtConcurrent\\b", r"\\bQtCore\\b"
+                           , r"\\bQtDBus\\b", r"\\bQtDesigner\\b", r"\\bQtDesignerComponents\\b", r"\\bQtGui\\b", r"\\bQtHelp\\b", r"\\bQtLabsControls\\b"
+                           , r"\\bQtLabsTemplates\\b", r"\\bQtLocation\\b", r"\\bQtMultimedia\\b", r"\\bQtMultimediaQuick_p\\b", r"\\bQtMultimediaWidgets\\b"
+                           , r"\\bQtNetwork\\b", r"\\bQtNfc\\b", r"\\bQtOpenGL\\b", r"\\bQtOpenGLExtensions\\b", r"\\bQtPlatformHeaders\\b", r"\\bQtPlatformSupport\\b"
+                           , r"\\bQtPositioning\\b", r"\\bQtPrintSupport\\b", r"\\bQtQml\\b", r"\\bQtQmlDevTools\\b", r"\\bQtQuick\\b", r"\\bQtQuickParticles\\b"
+                           , r"\\bQtQuickTest\\b", r"\\bQtQuickWidgets\\b", r"\\bQtScript\\b", r"\\bQtScriptTools\\b", r"\\bQtSensors\\b", r"\\bQtSerialBus\\b"
+                           , r"\\bQtSerialPort\\b", r"\\bQtSql\\b", r"\\bQtSvg\\b", r"\\bQtTest\\b", r"\\bQtUiPlugin\\b", r"\\bQtUiTools\\b", r"\\bQtWebChannel\\b"
+                           , r"\\bQtWebKit\\b", r"\\bQtWebKitWidgets\\b", r"\\bQtWebSockets\\b", r"\\bQtWidgets\\b", r"\\bQtWinExtras\\b", r"\\bQtXml\\b"
+                           , r"\\bQtXmlPatterns\\b" , r"\\bosg\\b", r"\\bosgAnimation\\b", r"\\bosgDB\\b", r"\\bosgFX\\b", r"\\bosgGA\\b"
+                           , r"\\bosgManipulator\\b", r"\\bosgParticle\\b" , r"\\bosgPresentation\\b"
+                           , r"\\bosgQt\\b", r"\\bosgShadow\\b", r"\\bosgSim\\b", r"\\bosgTerrain\\b", r"\\bosgText\\b", r"\\bosgUI\\b", r"\\bosgUtil\\b", r"\\bosgViewer\\b"
+                           , r"\\bosgVolume\\b", r"\\bosgWidget\\b", r"clang-cl.exe", r"clang-check.exe", r"llvm-lto2.exe", r"\\bdoc\\b", r".gitignore"]
   if args.PLATFORMVERSION == "32":
-    files_dirs_to_exclude = files_dirs_to_exclude + [r"mingw64", r"ucrt64", r"clang64"]
+    files_dirs_to_exclude = files_dirs_to_exclude + [r"\\bmingw64\\b", r"\\bucrt64\\b", r"\\bclang64\\b"]
   else: # 64 bit
     if args.MSYSRUNTIME == "ucrt":
-      files_dirs_to_exclude = files_dirs_to_exclude + [r"mingw32", r"mingw64", r"clang64", r"clang32"]
+      files_dirs_to_exclude = files_dirs_to_exclude + [r"\\bmingw32\\b", r"\\bmingw64\\b", r"\\bclang64\\b", r"\\bclang32\\b"]
     else: # mingw64
-      files_dirs_to_exclude = files_dirs_to_exclude + [r"mingw32", r"ucrt64", r"clang64", r"clang32"]
+      files_dirs_to_exclude = files_dirs_to_exclude + [r"\\bmingw32\\b", r"\\bucrt64\\b", r"\\bclang64\\b", r"\\bclang32\\b"]
   list_files(base_directory, files_dirs_to_exclude, f, True)
   # Create share directory and copy files in it
   f.write('${SetOutPath} "\\\\?\\$INSTDIR\\share"' + '\n')
