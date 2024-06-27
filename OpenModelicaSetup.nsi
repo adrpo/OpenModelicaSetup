@@ -181,6 +181,7 @@ SectionEnd
 Section "OpenModelica Core" Section1
   SectionIn RO
   SetOverwrite on
+  ${SetOutPath} "\\?\$INSTDIR\"
   # Create file FilesList.nsh by calling python script GenerateFilesList.py
   !include "FilesList.nsh"
 SectionEnd
@@ -256,7 +257,7 @@ Section -post SEC0001
   "" "$INSTDIR\icons\omshell.ico" ""
   ${CreateShortcut} "$SMPROGRAMS\$StartMenuGroup\OpenModelica Website.lnk" "$INSTDIR\share\doc\omc\OpenModelica Project Online.url" \
   "" "$INSTDIR\icons\IExplorer.ico" ""
-  ${SetOutPath} "\\?\$INSTDIR\"
+  SetOutPath "\\?\$INSTDIR\"
   ${CreateShortcut} "$SMPROGRAMS\$StartMenuGroup\Uninstall OpenModelica.lnk" "$INSTDIR\Uninstall.exe" \
   "" "$INSTDIR\icons\OpenModelica.ico" ""
   ${CreateDirectory} "$SMPROGRAMS\$StartMenuGroup\Documentation"
@@ -314,6 +315,8 @@ Section "Uninstall"
   FileOpen $UninstLog "$INSTDIR\${UninstLog}" r
   StrCpy $R1 -1
 
+  DetailPrint "Reading $INSTDIR\${UninstLog}"
+
   GetLineCount:
     ClearErrors
     FileRead $UninstLog $R0
@@ -326,11 +329,6 @@ Section "Uninstall"
 
   LoopRead:
     StrCmp $R1 0 LoopDone
-    Pop $R0
-
-    Push $R0
-    Push "\\?\"
-    Call un.StrStrip
     Pop $R0
 
     IfFileExists "$R0\*.*" 0 +3
