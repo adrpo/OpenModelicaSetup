@@ -53,7 +53,7 @@ def list_files(base_dir, exclude_dirs, exclude_files, f, recursive):
       f.write('${SetOutPath} "$R0' + nested_dir + '"\n')
 
     for file in files:
-      if not any(regex.match(file) for regex in exclude_files_regex):
+      if not any(regex.fullmatch(file) for regex in exclude_files_regex):
         file_path = os.path.join(root, file)
         file_path = file_path.replace('/','\\')
         f.write('${File} "' + file_path + '" "' + file + '"\n')
