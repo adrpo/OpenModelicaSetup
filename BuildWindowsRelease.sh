@@ -49,10 +49,21 @@ if [ "${MSYSTEM}" = "MINGW32" ]; then
 fi
 
 
+# signing is optional so anyone can build the release; the Jenkins release jobs set
+# OM_REQUIRE_SIGNING=yes so that they fail instead of shipping an unsigned installer
+signing_failed() {
+ if [ "${OM_REQUIRE_SIGNING}" = "yes" ]; then
+  echo "ERROR: $1 and OM_REQUIRE_SIGNING=yes, stopping"
+  exit 1
+ fi
+ echo "WARNING: $1, the installer will not be signed"
+ SIGN_ENABLED=""
+}
+
+SIGN_ENABLED="yes"
 SIGNTOOL=`find /c/Program\ Files\ \(x86\)/Windows\ Kits/10/ -wholename "*${XPREFIX}/signtool.exe" | tail -1`
 if [ "${SIGNTOOL}" = "" ]; then
- echo "Could not find signtool.exe"
- exit 1
+ signing_failed "could not find signtool.exe"
 fi
 
 # what signtool needs to use the eToken with a password: the signing certificate exported to
@@ -89,10 +100,11 @@ sign_file() {
  return ${status}
 }
 
-echo "Testing if we can sign the executable with signtool.exe"
-if ! sign_file /c/dev/sign/OpenModelica.exe; then
- echo "Signing does not work, stopping before building anything"
- exit 1
+if [ -n "${SIGN_ENABLED}" ]; then
+ echo "Testing if we can sign the executable with signtool.exe"
+ if ! sign_file /c/dev/sign/OpenModelica.exe; then
+  signing_failed "signing /c/dev/sign/OpenModelica.exe failed"
+ fi
 fi
 
 # don't exit on error
@@ -247,8 +259,12 @@ if ! makensis //DMSYSRUNTIME="${MSYSRUNTIME}" //DPLATFORMVERSION="${PLATFORM::-3
   exit 1
 fi
 
-# sign the installer, a release must not ship unsigned
-sign_file OpenModelica.exe
+# sign the installer
+if [ -n "${SIGN_ENABLED}" ]; then
+ if ! sign_file OpenModelica.exe; then
+  signing_failed "signing OpenModelica.exe failed"
+ fi
+fi
 
 # move the installer
 mv OpenModelica.exe ${OMC_INSTALL_FILE_PREFIX}.exe
