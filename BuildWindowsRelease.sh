@@ -53,9 +53,46 @@ SIGNTOOL=`find /c/Program\ Files\ \(x86\)/Windows\ Kits/10/ -wholename "*${XPREF
 if [ "${SIGNTOOL}" = "" ]; then
  echo "Could not find signtool.exe"
  exit 1
-else
- echo "Testing if we can sign the executable with signtool.exe"
- "${SIGNTOOL}" sign //n "Open Source Modelica Consortium" //tr "http://timestamp.globalsign.com/tsa/r6advanced1" //a //fd SHA256 //td SHA256 //v /c/dev/sign/OpenModelica.exe
+fi
+
+# what signtool needs to use the eToken with a password: the signing certificate exported to
+# a file, its key container as the eToken CSP names it, and that CSP. The container name can
+# not be read from the token without the password and the certificate is not in any
+# certificate store when no one is logged in, so the values that work on the release build
+# machine are the defaults; set them in the environment when the certificate is renewed.
+export TOKEN_CERT="${TOKEN_CERT:-C:\\dev\\sign\\osmc.cer}"
+export TOKEN_CONTAINER="${TOKEN_CONTAINER:-p11#1c15877afe5ca77f}"
+export TOKEN_CSP="${TOKEN_CSP:-eToken Base Cryptographic Provider}"
+if [ -n "${SIGN_ENABLED}" ] && [ -n "${TOKEN_PW:+set}" ] && [ ! -f "$(cygpath -u "${TOKEN_CERT}")" ]; then
+ signing_failed "the signing certificate ${TOKEN_CERT} does not exist"
+fi
+
+# sign a file with the eToken
+# with TOKEN_PW set (Jenkins credential) the token is unlocked by the password alone, so this
+# works from a service/session-0 agent without a SafeNet login; TOKEN_CERT, TOKEN_CONTAINER
+# and TOKEN_CSP are set above.
+# without TOKEN_PW it relies on an interactive SafeNet single sign-on, as before.
+sign_file() {
+ # keep the password out of the -x trace
+ local xtrace=""
+ case $- in *x*) xtrace="yes";; esac
+ { set +x; } 2>/dev/null
+ local status=0
+ if [ -n "${TOKEN_PW}" ]; then
+  echo "signing $1 with the token password, certificate ${TOKEN_CERT}, container ${TOKEN_CONTAINER}"
+  "${SIGNTOOL}" sign //f "${TOKEN_CERT}" //csp "${TOKEN_CSP}" //kc "[{{${TOKEN_PW}}}]=${TOKEN_CONTAINER}" //tr "http://timestamp.globalsign.com/tsa/r6advanced1" //fd SHA256 //td SHA256 //v "$1" || status=$?
+ else
+  echo "signing $1 via the SafeNet single sign-on"
+  "${SIGNTOOL}" sign //n "Open Source Modelica Consortium" //tr "http://timestamp.globalsign.com/tsa/r6advanced1" //a //fd SHA256 //td SHA256 //v "$1" || status=$?
+ fi
+ [ -n "${xtrace}" ] && set -x
+ return ${status}
+}
+
+echo "Testing if we can sign the executable with signtool.exe"
+if ! sign_file /c/dev/sign/OpenModelica.exe; then
+ echo "Signing does not work, stopping before building anything"
+ exit 1
 fi
 
 # don't exit on error
@@ -210,8 +247,8 @@ if ! makensis //DMSYSRUNTIME="${MSYSRUNTIME}" //DPLATFORMVERSION="${PLATFORM::-3
   exit 1
 fi
 
-# sign the installer but do not fail! (set -e is active, so guard explicitly)
-"${SIGNTOOL}" sign //n "Open Source Modelica Consortium" //tr "http://timestamp.globalsign.com/tsa/r6advanced1" //a //fd SHA256 //td SHA256 //v OpenModelica.exe || echo "WARNING: signing OpenModelica.exe failed, continuing unsigned"
+# sign the installer, a release must not ship unsigned
+sign_file OpenModelica.exe
 
 # move the installer
 mv OpenModelica.exe ${OMC_INSTALL_FILE_PREFIX}.exe
