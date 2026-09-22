@@ -45,6 +45,29 @@ def nsis_quote(path):
   """
   return path.replace('$', '$$').replace('"', '$\\"')
 
+def find_lib_omc_dir(lib_directory):
+  """Locate the lib/<OM_LIBRARY_ARCH>/omc directory produced by the CMake install.
+
+  OpenModelica's CMakeLists.txt installs static libraries to
+  lib/<OM_LIBRARY_ARCH>/omc (e.g. lib/x86_64-windows-gnu/omc) instead of the flat
+  lib/omc used by the old Autoconf build, and the compiler hardcodes that same
+  arch-qualified path when linking simulated models. So instead of hardcoding
+  OM_LIBRARY_ARCH's naming scheme here too (and risking it silently drifting out
+  of sync), detect whatever directory the build actually produced.
+  """
+  candidates = []
+  for entry in sorted(os.listdir(lib_directory)):
+    omc_path = os.path.join(lib_directory, entry, "omc")
+    if os.path.isdir(omc_path):
+      candidates.append((entry, omc_path))
+  if len(candidates) != 1:
+    raise RuntimeError(
+      'Expected exactly one lib/<arch>/omc directory under "%s", found: %s. '
+      'Update GenerateFilesList.py if the CMake install layout changed '
+      '(see OpenModelica issue #16846).' % (lib_directory, [c[0] for c in candidates])
+    )
+  return candidates[0]
+
 def list_files(base_dir, exclude_dirs, exclude_files, f, recursive):
   # Compile regular expressions for exclusions
   exclude_dirs_regex = [re.compile(pattern) for pattern in exclude_dirs]
@@ -116,12 +139,14 @@ if __name__ == "__main__":
   base_directory = args.OPENMODELICAHOME + r"\include\omc"
   files_to_exclude = [r".*\.git.*"]
   list_files(base_directory, [], files_to_exclude, f, True)
-  # Create lib\omc directory and copy files in it
+  # Create lib\<arch>\omc directory and copy files in it
+  lib_directory = args.OPENMODELICAHOME + r"\lib"
+  arch_name, omc_lib_directory = find_lib_omc_dir(lib_directory)
   f.write(r'${AddItem} "\\?\$INSTDIR\lib"' + '\n')
-  f.write(r'${SetOutPath} "\\?\$INSTDIR\lib\omc"' + '\n')
-  base_directory = args.OPENMODELICAHOME + r"\lib\omc"
+  f.write(r'${AddItem} "\\?\$INSTDIR\lib\%s"' % arch_name + '\n')
+  f.write(r'${SetOutPath} "\\?\$INSTDIR\lib\%s\omc"' % arch_name + '\n')
   files_to_exclude = [r".*\.git.*"]
-  list_files(base_directory, [], files_to_exclude, f, True)
+  list_files(omc_lib_directory, [], files_to_exclude, f, True)
   # Create tools directory and copy files in it
   f.write(r'${SetOutPath} "\\?\$INSTDIR\tools"' + '\n')
   # copy the setup file / readme

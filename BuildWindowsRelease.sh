@@ -55,7 +55,7 @@ if [ "${SIGNTOOL}" = "" ]; then
  exit 1
 else
  echo "Testing if we can sign the executable with signtool.exe"
- "${SIGNTOOL}" sign //n "Open Source Modelica Consortium" //tr "http://timestamp.globalsign.com/tsa/r6advanced1" //a //fd SHA256 //td SHA256 //v /c/dev/sign/OpenModelica.exe 
+ "${SIGNTOOL}" sign //n "Open Source Modelica Consortium" //tr "http://timestamp.globalsign.com/tsa/r6advanced1" //a //fd SHA256 //td SHA256 //v /c/dev/sign/OpenModelica.exe
 fi
 
 # don't exit on error
@@ -167,9 +167,7 @@ rm -rf build_cmake/
 echo "Building OpenModelica and OpenModelica libraries"
 # make sure we break on error!
 set -e
-# CMAKE_INSTALL_PREFIX=build keeps the install layout identical to the old
-# Makefile.omdev.mingw build, so OPENMODELICAHOME/OPENMODELICALIBRARY above
-# and the installer packaging below don't need to change.
+
 CMAKE_ENCRYPTION_FLAG="-DOM_ENABLE_ENCRYPTION=OFF"
 if [ "${OM_ENABLE_ENCRYPTION}" = "yes" ]; then
   CMAKE_ENCRYPTION_FLAG="-DOM_ENABLE_ENCRYPTION=ON"
