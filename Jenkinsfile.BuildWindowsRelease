@@ -1,0 +1,139 @@
+// Jenkins pipeline that builds the OpenModelica Windows release/nightly installer.
+// It does what the job's batch step and bn.bat (buildNightly64bit.bat) did, but binds the
+// eToken password with withCredentials so BuildWindowsRelease.sh can sign from an agent
+// running in session 0 (no SafeNet login).
+//
+// Only the eToken password comes from Jenkins; the certificate file and key container are
+// defaults in BuildWindowsRelease.sh (TOKEN_CERT/TOKEN_CONTAINER override them).
+//
+// Setup
+//  1. Jenkins credential: kind "Secret text", id osmc-token-password (or set TOKEN_CREDENTIAL),
+//     secret = the eToken password. Never put the password in a job config or a file on the node.
+//  2. Job: "Pipeline script from SCM", repository OpenModelica/OpenModelicaSetup,
+//     script path Jenkinsfile.BuildWindowsRelease, "Lightweight checkout" on.
+//  3. Node: start the agent from a Task Scheduler task, trigger "At startup", "Run whether user
+//     is logged on or not" with the password stored, no "Stop the task if it runs longer than".
+//     Check that the agent runs in session 0:
+//       Get-CimInstance Win32_Process -Filter "Name='java.exe'" | Select ProcessId, SessionId
+//     Then the node needs no logged-in session and can reboot unattended.
+//  4. Node: C:\dev\sign holds osmc.cer (the signing certificate) and OpenModelica.exe (any
+//     executable; the build test-signs it first so a signing problem fails within a minute).
+//  5. First run: OM_REQUIRE_SIGNING off; after that leave it on so an unsigned installer is
+//     never shipped.
+//
+// Certificate renewal (the current certificate expires 2027-07-27)
+//  1. With the new certificate on the token, open SafeNet Authentication Client Tools,
+//     Advanced View, the token, the certificate: note its "Key container name" (p11#...).
+//  2. Export the certificate (public part, .cer) over C:\dev\sign\osmc.cer.
+//  3. Update the TOKEN_CONTAINER default in BuildWindowsRelease.sh (or set TOKEN_CONTAINER in the
+//     job environment) and run one build to check that the test signing passes.
+//  The container name cannot be read without the password and the certificate is in no
+//  certificate store when no one is logged in, which is why they are not looked up at run time.
+
+pipeline {
+  agent { label "${params.NODE_LABEL}" }
+  options {
+    disableConcurrentBuilds()
+    timestamps()
+    buildDiscarder(logRotator(numToKeepStr: '30'))
+    timeout(time: 12, unit: 'HOURS')
+    // the build uses the fixed c:\dev layout, not the workspace
+    skipDefaultCheckout()
+  }
+  parameters {
+    string(name: 'GIT_BRANCH', defaultValue: 'master', description: 'OpenModelica tag or branch to build, master for the nightly build')
+    booleanParam(name: 'FORCE_BUILD', defaultValue: false, description: 'Delete the previous builds in c:\\dev\\OpenModelica_releases so an already built version is built again')
+    string(name: 'NODE_LABEL', defaultValue: 'w.r7950.win.2.maas', description: 'Jenkins node with the eToken plugged in')
+    string(name: 'MAKETHREADS', defaultValue: '-j16', description: 'Parallel make flag passed to BuildWindowsRelease.sh')
+    booleanParam(name: 'OM_REQUIRE_SIGNING', defaultValue: true, description: 'Fail the build instead of shipping an unsigned installer')
+    booleanParam(name: 'OM_ENABLE_ENCRYPTION', defaultValue: false, description: 'Build the encryption-enabled release')
+    string(name: 'TOKEN_CREDENTIAL', defaultValue: 'osmc-token-password', description: 'Id of the Jenkins secret-text credential holding the eToken password, empty to sign via the SafeNet single sign-on')
+  }
+  environment {
+    OMDEV = 'C:\\OMDevUCRT'
+    OMDEV_MSYSTEM = 'UCRT64'
+    // BuildWindowsRelease.sh uploads with $HOME/.ssh/id_rsa
+    HOME = '/c/dev/'
+    OM_GIT_BRANCH = "${params.GIT_BRANCH}"
+    OM_REQUIRE_SIGNING = "${params.OM_REQUIRE_SIGNING ? 'yes' : ''}"
+    OM_ENABLE_ENCRYPTION = "${params.OM_ENABLE_ENCRYPTION ? 'yes' : ''}"
+  }
+  stages {
+    stage('Prepare') {
+      steps {
+        // kill leftovers from a previous build; taskkill fails when nothing runs
+        bat '''
+          taskkill /F /IM omc.exe /T
+          taskkill /F /IM perl.exe /T
+          exit /b 0
+        '''
+        script {
+          if (params.FORCE_BUILD) {
+            echo 'Forcing build ... deleting the previous builds'
+            bat '''
+              for /d %%G in ("C:\\dev\\OpenModelica_releases\\v*") do rd /s /q "%%~G"
+              exit /b 0
+            '''
+          }
+        }
+        bat '''
+          set "PATH=%PATH%;C:\\Program Files\\TortoiseSVN\\bin\\;c:\\bin\\jdk\\bin;c:\\bin\\nsis\\;c:\\bin\\git\\bin;c:\\Program Files\\Git\\bin"
+          echo OMDEV: %OMDEV%
+          if not exist "%OMDEV%" (
+            cd /d c:\\ || exit /b 1
+            git clone https://gitlab.liu.se/OpenModelica/OMDevUCRT.git OMDevUCRT || exit /b 1
+            cd /d "%OMDEV%" || exit /b 1
+            git checkout master || exit /b 1
+            call SETUP_OMDEV.bat || exit /b 1
+          )
+          if not exist c:\\dev\\ md c:\\dev\\
+          if not exist c:\\dev\\OpenModelica_releases\\ md c:\\dev\\OpenModelica_releases\\
+          if not exist c:\\dev\\OMTLMSimulator\\ (
+            cd /d c:\\dev\\ || exit /b 1
+            git clone https://github.com/OpenModelica/OMTLMSimulator.git OMTLMSimulator || exit /b 1
+          )
+          if not exist c:\\dev\\OM64bit\\ (
+            cd /d c:\\dev\\ || exit /b 1
+            git clone --recursive https://github.com/OpenModelica/OpenModelica.git OM64bit || exit /b 1
+          )
+          if not exist c:\\dev\\OM64bit\\OMSetup\\ (
+            cd /d c:\\dev\\OM64bit\\ || exit /b 1
+            git clone https://github.com/OpenModelica/OpenModelicaSetup OMSetup || exit /b 1
+          )
+
+          rem update the build script first
+          cd /d c:\\dev\\OM64bit\\OMSetup || exit /b 1
+          git pull || exit /b 1
+
+          rem update OMDev
+          cd /d "%OMDEV%" || exit /b 1
+          git checkout master || exit /b 1
+          git checkout . || exit /b 1
+          git pull || exit /b 1
+        '''
+      }
+    }
+    stage('Build and sign') {
+      steps {
+        script {
+          // TOKEN_PW only reaches the script through the environment, never the command line
+          def build = {
+            bat '''
+              set "PATH=%PATH%;C:\\Program Files\\TortoiseSVN\\bin\\;c:\\bin\\jdk\\bin;c:\\bin\\nsis\\;c:\\bin\\git\\bin;c:\\Program Files\\Git\\bin"
+              cd /d c:\\dev\\OpenModelica_releases || exit /b 1
+              set MSYSTEM=%OMDEV_MSYSTEM%
+              "%OMDEV%\\tools\\msys\\usr\\bin\\sh" --login -i -c "time /c/dev/OM64bit/OMSetup/BuildWindowsRelease.sh adrpo %MAKETHREADS% 64bit %OM_GIT_BRANCH%"
+            '''
+          }
+          if (params.TOKEN_CREDENTIAL) {
+            withCredentials([string(credentialsId: params.TOKEN_CREDENTIAL, variable: 'TOKEN_PW')]) {
+              build()
+            }
+          } else {
+            build()
+          }
+        }
+      }
+    }
+  }
+}
