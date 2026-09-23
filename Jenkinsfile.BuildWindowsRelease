@@ -124,7 +124,7 @@ pipeline {
               set "PATH=%PATH%;C:\\Program Files\\TortoiseSVN\\bin\\;c:\\bin\\jdk\\bin;c:\\bin\\nsis\\;c:\\bin\\git\\bin;c:\\Program Files\\Git\\bin"
               cd /d c:\\dev\\OpenModelica_releases || exit /b 1
               set MSYSTEM=%OMDEV_MSYSTEM%
-              "%OMDEV%\\tools\\msys\\usr\\bin\\sh" --login -i -c "time /c/dev/OM64bit/OMSetup/BuildWindowsRelease.sh adrpo %MAKETHREADS% 64bit %OM_GIT_BRANCH%"
+              "%OMDEV%\\tools\\msys\\usr\\bin\\sh" --login -c "time /c/dev/OM64bit/OMSetup/BuildWindowsRelease.sh adrpo %MAKETHREADS% 64bit %OM_GIT_BRANCH%"
             '''
           }
           if (params.TOKEN_CREDENTIAL) {
