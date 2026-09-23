@@ -31,7 +31,10 @@
 //  certificate store when no one is logged in, which is why they are not looked up at run time.
 
 pipeline {
-  agent { label "${params.NODE_LABEL}" }
+  // only the node with the eToken can sign; the label is fixed here, not a parameter, so a
+  // build cannot be sent elsewhere and the first run (before Jenkins knows the parameters)
+  // still finds the node
+  agent { label 'windows.openmodelica.org' }
   options {
     disableConcurrentBuilds()
     timestamps()
@@ -43,7 +46,6 @@ pipeline {
   parameters {
     string(name: 'GIT_BRANCH', defaultValue: 'master', description: 'OpenModelica tag or branch to build, master for the nightly build')
     booleanParam(name: 'FORCE_BUILD', defaultValue: false, description: 'Delete the previous builds in c:\\dev\\OpenModelica_releases so an already built version is built again')
-    string(name: 'NODE_LABEL', defaultValue: 'w.r7950.win.2.maas', description: 'Jenkins node with the eToken plugged in')
     string(name: 'MAKETHREADS', defaultValue: '-j16', description: 'Parallel make flag passed to BuildWindowsRelease.sh')
     booleanParam(name: 'OM_REQUIRE_SIGNING', defaultValue: true, description: 'Fail the build instead of shipping an unsigned installer')
     booleanParam(name: 'OM_ENABLE_ENCRYPTION', defaultValue: false, description: 'Build the encryption-enabled release')
