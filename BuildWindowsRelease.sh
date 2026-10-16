@@ -223,10 +223,12 @@ if [ "${OM_ENABLE_ENCRYPTION}" = "yes" ]; then
 fi
 # MAKETHREADS is passed in as "-jN"; cmake --build wants just N
 CMAKE_BUILD_PARALLEL="${MAKETHREADS#-j}"
-cmake -S . -B build_cmake -G "MinGW Makefiles" \
+cmake -S . -B build_cmake -G "MSYS Makefiles" \
       -DCMAKE_BUILD_TYPE=Release \
       -DOM_USE_CCACHE=OFF \
       -DCMAKE_INSTALL_PREFIX=build \
+      -DCMAKE_C_COMPILER=clang \
+      -DCMAKE_CXX_COMPILER=clang++ \
       ${CMAKE_ENCRYPTION_FLAG}
 cmake --build build_cmake --parallel ${CMAKE_BUILD_PARALLEL} --target install
 cd /c/dev/${OM_ENCRYPT}OM${PLATFORM}
