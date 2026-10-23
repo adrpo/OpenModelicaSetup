@@ -29,6 +29,17 @@
 //     job environment) and run one build to check that the test signing passes.
 //  The container name cannot be read without the password and the certificate is in no
 //  certificate store when no one is logged in, which is why they are not looked up at run time.
+//
+// Encryption build (OM_ENABLE_ENCRYPTION, replaces build-encryption.bat)
+//  Use a second job on this same Jenkinsfile with OM_ENABLE_ENCRYPTION on. It builds in its own
+//  tree, c:\dev\e\OM64bit, releases go to c:\dev\OpenModelica_releases\e and are uploaded
+//  to nightly-builds/e/64bit with the -encryption suffix. PrepareEncryption.sh clones or updates
+//  OMEncryption in that tree and decrypts the SEMLA private keys, which needs on the node:
+//   - C:\OMEncryptionNeeds\OMPublicKey, a git checkout holding public_key_tool.pem;
+//   - the passphrase of the private keys: a Jenkins "Secret text" credential named by
+//     ENCRYPTION_KEY_CREDENTIAL or, when that is empty, C:\OMEncryptionNeeds\pass-gpg-key.txt.
+//  Both jobs take the windows-release-build lock (Lockable Resources plugin): they kill each
+//  other's omc.exe in Prepare and would share the build machine otherwise.
 
 pipeline {
   // only the node with the eToken can sign; the label is fixed here, not a parameter, so a
@@ -40,6 +51,8 @@ pipeline {
     timestamps()
     buildDiscarder(logRotator(numToKeepStr: '30'))
     timeout(time: 12, unit: 'HOURS')
+    // the nightly and the encryption job run on the same node, one at a time
+    lock(resource: 'windows-release-build')
     // the build uses the fixed c:\dev layout, not the workspace
     skipDefaultCheckout()
   }
@@ -49,6 +62,7 @@ pipeline {
     string(name: 'MAKETHREADS', defaultValue: '-j16', description: 'Parallel make flag passed to BuildWindowsRelease.sh')
     booleanParam(name: 'OM_REQUIRE_SIGNING', defaultValue: true, description: 'Fail the build instead of shipping an unsigned installer')
     booleanParam(name: 'OM_ENABLE_ENCRYPTION', defaultValue: false, description: 'Build the encryption-enabled release')
+    string(name: 'ENCRYPTION_KEY_CREDENTIAL', defaultValue: '', description: 'Id of the Jenkins secret-text credential holding the passphrase of the OMEncryption private keys, empty to read it from C:\\OMEncryptionNeeds\\pass-gpg-key.txt')
     string(name: 'TOKEN_CREDENTIAL', defaultValue: 'osmc-token-password', description: 'Id of the Jenkins secret-text credential holding the eToken password, empty to sign via the SafeNet single sign-on')
   }
   environment {
@@ -59,6 +73,10 @@ pipeline {
     OM_GIT_BRANCH = "${params.GIT_BRANCH}"
     OM_REQUIRE_SIGNING = "${params.OM_REQUIRE_SIGNING ? 'yes' : ''}"
     OM_ENABLE_ENCRYPTION = "${params.OM_ENABLE_ENCRYPTION ? 'yes' : ''}"
+    // BuildWindowsRelease.sh builds the encryption release in c:\dev\e\OM64bit
+    OM_DIR = "${params.OM_ENABLE_ENCRYPTION ? 'c:\\dev\\e\\OM64bit' : 'c:\\dev\\OM64bit'}"
+    OM_DIR_MSYS = "${params.OM_ENABLE_ENCRYPTION ? '/c/dev/e/OM64bit' : '/c/dev/OM64bit'}"
+    OM_RELEASES = "${params.OM_ENABLE_ENCRYPTION ? 'c:\\dev\\OpenModelica_releases\\e' : 'c:\\dev\\OpenModelica_releases'}"
   }
   stages {
     stage('Prepare') {
@@ -73,7 +91,7 @@ pipeline {
           if (params.FORCE_BUILD) {
             echo 'Forcing build ... deleting the previous builds'
             bat '''
-              for /d %%G in ("C:\\dev\\OpenModelica_releases\\v*") do rd /s /q "%%~G"
+              for /d %%G in ("%OM_RELEASES%\\v*") do rd /s /q "%%~G"
               exit /b 0
             '''
           }
@@ -89,22 +107,20 @@ pipeline {
             call SETUP_OMDEV.bat || exit /b 1
           )
           if not exist c:\\dev\\ md c:\\dev\\
-          if not exist c:\\dev\\OpenModelica_releases\\ md c:\\dev\\OpenModelica_releases\\
+          if not exist "%OM_RELEASES%\\" md "%OM_RELEASES%"
           if not exist c:\\dev\\OMTLMSimulator\\ (
             cd /d c:\\dev\\ || exit /b 1
             git clone https://github.com/OpenModelica/OMTLMSimulator.git OMTLMSimulator || exit /b 1
           )
-          if not exist c:\\dev\\OM64bit\\ (
-            cd /d c:\\dev\\ || exit /b 1
-            git clone --recursive https://github.com/OpenModelica/OpenModelica.git OM64bit || exit /b 1
+          if not exist "%OM_DIR%\\" (
+            git clone --recursive https://github.com/OpenModelica/OpenModelica.git "%OM_DIR%" || exit /b 1
           )
-          if not exist c:\\dev\\OM64bit\\OMSetup\\ (
-            cd /d c:\\dev\\OM64bit\\ || exit /b 1
-            git clone https://github.com/OpenModelica/OpenModelicaSetup OMSetup || exit /b 1
+          if not exist "%OM_DIR%\\OMSetup\\" (
+            git clone https://github.com/OpenModelica/OpenModelicaSetup "%OM_DIR%\\OMSetup" || exit /b 1
           )
 
           rem update the build script first
-          cd /d c:\\dev\\OM64bit\\OMSetup || exit /b 1
+          cd /d "%OM_DIR%\\OMSetup" || exit /b 1
           git pull || exit /b 1
 
           rem update OMDev
@@ -113,6 +129,25 @@ pipeline {
           git checkout . || exit /b 1
           git pull || exit /b 1
         '''
+        script {
+          if (params.OM_ENABLE_ENCRYPTION) {
+            // OM_ENCRYPTION_KEY_PW only reaches the script through the environment
+            def prepare = {
+              bat '''
+                set "PATH=%PATH%;c:\\bin\\git\\bin;c:\\Program Files\\Git\\bin"
+                set MSYSTEM=%OMDEV_MSYSTEM%
+                "%OMDEV%\\tools\\msys\\usr\\bin\\sh" --login -c "sh %OM_DIR_MSYS%/OMSetup/PrepareEncryption.sh %OM_DIR_MSYS%"
+              '''
+            }
+            if (params.ENCRYPTION_KEY_CREDENTIAL) {
+              withCredentials([string(credentialsId: params.ENCRYPTION_KEY_CREDENTIAL, variable: 'OM_ENCRYPTION_KEY_PW')]) {
+                prepare()
+              }
+            } else {
+              prepare()
+            }
+          }
+        }
       }
     }
     stage('Build and sign') {
@@ -122,9 +157,9 @@ pipeline {
           def build = {
             bat '''
               set "PATH=%PATH%;C:\\Program Files\\TortoiseSVN\\bin\\;c:\\bin\\jdk\\bin;c:\\bin\\nsis\\;c:\\bin\\git\\bin;c:\\Program Files\\Git\\bin"
-              cd /d c:\\dev\\OpenModelica_releases || exit /b 1
+              cd /d "%OM_RELEASES%" || exit /b 1
               set MSYSTEM=%OMDEV_MSYSTEM%
-              "%OMDEV%\\tools\\msys\\usr\\bin\\sh" --login -i -c "time /c/dev/OM64bit/OMSetup/BuildWindowsRelease.sh adrpo %MAKETHREADS% 64bit %OM_GIT_BRANCH%"
+              "%OMDEV%\\tools\\msys\\usr\\bin\\sh" --login -c "time %OM_DIR_MSYS%/OMSetup/BuildWindowsRelease.sh adrpo %MAKETHREADS% 64bit %OM_GIT_BRANCH%"
             '''
           }
           if (params.TOKEN_CREDENTIAL) {
