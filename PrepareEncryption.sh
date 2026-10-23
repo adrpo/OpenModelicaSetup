@@ -19,6 +19,10 @@ fi
 
 set -e
 
+# the MSYS login shell drops the Windows PATH; git comes from Git for Windows, as in
+# BuildWindowsRelease.sh
+export PATH=$PATH:/c/bin/git/bin:/c/Program\ Files/Git/bin
+
 if [ ! -d "${OM_DIR}/OMEncryption" ]; then
   echo "Checkout ${OM_DIR}/OMEncryption"
   git clone https://github.com/OpenModelica/OMEncryption "${OM_DIR}/OMEncryption"
